@@ -1,9 +1,6 @@
 import Header from "@/components/landing/Header";
 import Hero from "@/components/landing/Hero";
-import ValueProposition from "@/components/landing/ValueProposition";
-import Cotizador from "@/components/landing/Cotizador";
-import Combos from "@/components/landing/Combos";
-import HardwareCatalog from "@/components/landing/HardwareCatalog";
+import SolutionsSection from "@/components/landing/SolutionsSection";
 import Services from "@/components/landing/Services";
 import Testimonials from "@/components/landing/Testimonials";
 import FAQ from "@/components/landing/FAQ";
@@ -16,14 +13,22 @@ const Index = () => {
     <div className="min-h-screen bg-background w-full max-w-full overflow-x-hidden">
       <Header />
       <main className="w-full max-w-full overflow-x-hidden">
+        {/* 1. Hero con propuesta de valor + Barra de Confianza DIAN */}
         <Hero />
-        <ValueProposition />
-        <Cotizador />
-        <Combos />
-        <HardwareCatalog />
+
+        {/* 2. Centro de Soluciones Unificado con Pestañas (Cotizador a tu Medida, Combos Listos, Hardware) */}
+        <SolutionsSection />
+
+        {/* 3. Software & Legalidad DIAN condensados */}
         <Services />
+
+        {/* 4. Prueba Social */}
         <Testimonials />
+
+        {/* 5. Preguntas Frecuentes (FAQ) */}
         <FAQ />
+
+        {/* 6. Contacto y Cierre Express */}
         <ContactForm />
       </main>
       <Footer />

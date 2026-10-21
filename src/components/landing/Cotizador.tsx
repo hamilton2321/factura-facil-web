@@ -36,7 +36,11 @@ export const formatCOP = (amount: number) => {
   return "$" + amount.toLocaleString("es-CO");
 };
 
-export default function Cotizador() {
+export interface CotizadorProps {
+  isEmbedded?: boolean;
+}
+
+export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
   const { toast } = useToast();
 
   // State
@@ -183,14 +187,10 @@ export default function Cotizador() {
     }
   };
 
-  return (
-    <section id="cotizador" className="py-20 bg-muted/40 relative overflow-hidden w-full max-w-full">
-      {/* Decorative background glows */}
-      <div className="absolute top-0 right-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="section-container relative z-10">
-        {/* Section Header */}
+  const content = (
+    <div className={isEmbedded ? "w-full relative" : "section-container relative z-10"}>
+      {/* Section Header (Solo si no está embebido) */}
+      {!isEmbedded && (
         <div className="text-center max-w-3xl mx-auto mb-14 animate-fade-in">
           <Badge className="mb-4 bg-accent/15 text-accent-foreground border-accent/20 px-3 py-1 text-sm font-semibold inline-flex items-center gap-1.5">
             <Calculator className="w-4 h-4 text-accent" />
@@ -203,9 +203,10 @@ export default function Cotizador() {
             {cotizadorData.subtitle}
           </p>
         </div>
+      )}
 
-        {/* Main Grid: Steps (Left/Top) & Live Summary (Right/Bottom) */}
-        <div className="grid lg:grid-cols-12 gap-8 items-start">
+      {/* Main Grid: Steps (Left/Top) & Live Summary (Right/Bottom) */}
+      <div className="grid lg:grid-cols-12 gap-8 items-start">
           {/* Steps Column */}
           <div className="lg:col-span-8 space-y-10">
             {/* STEP 1: Tipo de Negocio */}
@@ -564,9 +565,8 @@ export default function Cotizador() {
             </div>
           </div>
         </div>
-      </div>
 
-      {/* CRM Lead Modal */}
+        {/* CRM Lead Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -666,6 +666,18 @@ export default function Cotizador() {
           </form>
         </DialogContent>
       </Dialog>
+    </div>
+  );
+
+  if (isEmbedded) {
+    return content;
+  }
+
+  return (
+    <section id="cotizador" className="py-20 bg-muted/40 relative overflow-hidden w-full max-w-full">
+      <div className="absolute top-0 right-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl pointer-events-none" />
+      {content}
     </section>
   );
 }
