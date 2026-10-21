@@ -10,13 +10,13 @@ const Hero = () => {
   ];
 
   return (
-    <section id="inicio" className="relative min-h-screen flex items-center pt-20 overflow-hidden">
+    <section id="inicio" className="relative min-h-screen flex items-center pt-20 overflow-hidden w-full max-w-full">
       {/* Background Gradient */}
-      <div className="absolute inset-0 gradient-primary opacity-5" />
-      <div className="absolute top-20 right-0 w-96 h-96 bg-accent/20 rounded-full blur-3xl" />
-      <div className="absolute bottom-20 left-0 w-72 h-72 bg-primary/10 rounded-full blur-3xl" />
+      <div className="absolute inset-0 gradient-primary opacity-5 pointer-events-none" />
+      <div className="absolute top-20 right-0 w-96 h-96 bg-accent/20 rounded-full blur-3xl pointer-events-none max-w-full" />
+      <div className="absolute bottom-20 left-0 w-72 h-72 bg-primary/10 rounded-full blur-3xl pointer-events-none max-w-full" />
 
-      <div className="section-container relative z-10">
+      <div className="section-container relative z-10 w-full">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Content */}
           <div className="animate-slide-up">
@@ -25,7 +25,7 @@ const Hero = () => {
               <span className="text-sm font-medium">Sistema POS #1 en Colombia</span>
             </div>
 
-            <h1 className="font-display font-bold text-4xl sm:text-5xl lg:text-6xl text-foreground leading-tight mb-6">
+            <h1 className="font-display font-bold text-3xl sm:text-5xl lg:text-6xl text-foreground leading-tight mb-6 break-words">
               Transforma tu negocio con la eficiencia de{" "}
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-500">
                 {siteConfig.name}

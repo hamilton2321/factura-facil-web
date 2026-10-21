@@ -69,7 +69,7 @@ const ContactForm = () => {
   };
 
   return (
-    <section id="contacto" className="py-20 lg:py-28 bg-secondary/30">
+    <section id="contacto" className="py-20 lg:py-28 bg-secondary/30 overflow-hidden w-full">
       <div className="section-container">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Content */}
@@ -86,25 +86,25 @@ const ContactForm = () => {
             </p>
 
             <div className="space-y-4">
-              <div className="flex items-center gap-4 p-4 bg-background rounded-xl border border-border">
-                <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center">
+              <div className="flex items-center gap-4 p-4 bg-background rounded-xl border border-border min-w-0">
+                <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0">
                   <Phone className="w-5 h-5 text-accent" />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <p className="text-sm text-muted-foreground">Llámanos</p>
-                  <a href={`tel:${siteConfig.phoneTel}`} className="font-display font-semibold text-foreground hover:text-accent transition-colors">
+                  <a href={`tel:${siteConfig.phoneTel}`} className="font-display font-semibold text-foreground hover:text-accent transition-colors text-sm sm:text-base">
                     {siteConfig.phoneDisplay}
                   </a>
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 p-4 bg-background rounded-xl border border-border">
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+              <div className="flex items-center gap-4 p-4 bg-background rounded-xl border border-border min-w-0">
+                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                   <Mail className="w-5 h-5 text-primary" />
                 </div>
-                <div>
+                <div className="min-w-0 overflow-hidden">
                   <p className="text-sm text-muted-foreground">Escríbenos</p>
-                  <a href={`mailto:${siteConfig.email}`} className="font-display font-semibold text-foreground hover:text-accent transition-colors">
+                  <a href={`mailto:${siteConfig.email}`} className="font-display font-semibold text-foreground hover:text-accent transition-colors text-sm sm:text-base break-all">
                     {siteConfig.email}
                   </a>
                 </div>
@@ -113,7 +113,7 @@ const ContactForm = () => {
           </div>
 
           {/* Form */}
-          <div className="bg-background rounded-2xl p-8 shadow-xl border border-border">
+          <div className="bg-background rounded-2xl p-6 sm:p-8 shadow-xl border border-border">
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="grid sm:grid-cols-2 gap-5">
                 <div className="space-y-2">

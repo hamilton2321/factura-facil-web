@@ -4,7 +4,7 @@ import { siteConfig } from "@/data/siteConfig";
 
 const HardwareCatalog = () => {
   return (
-    <section id="hardware" className="py-20 bg-secondary/30">
+    <section id="hardware" className="py-20 bg-secondary/30 overflow-hidden w-full">
       <div className="section-container">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <span className="inline-block bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-4">

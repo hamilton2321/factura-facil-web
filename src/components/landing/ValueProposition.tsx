@@ -23,7 +23,7 @@ const ValueProposition = () => {
   ];
 
   return (
-    <section className="py-20 lg:py-28 bg-secondary/30">
+    <section className="py-20 lg:py-28 bg-secondary/30 overflow-hidden w-full">
       <div className="section-container">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="font-display font-bold text-3xl sm:text-4xl lg:text-5xl text-foreground mb-6">

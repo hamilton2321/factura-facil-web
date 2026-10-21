@@ -12,9 +12,9 @@ import WhatsAppButton from "@/components/landing/WhatsAppButton";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background w-full max-w-full overflow-x-hidden">
       <Header />
-      <main>
+      <main className="w-full max-w-full overflow-x-hidden">
         <Hero />
         <ValueProposition />
         <Combos />

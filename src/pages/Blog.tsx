@@ -33,15 +33,15 @@ const Blog = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen bg-background w-full max-w-full overflow-x-hidden">
             <Header />
-            <main className="pt-24 pb-16">
+            <main className="pt-24 pb-16 w-full max-w-full overflow-x-hidden">
                 <div className="section-container">
                     <div className="text-center max-w-3xl mx-auto mb-16">
                         <span className="inline-block bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-4">
                             Blog y Recursos
                         </span>
-                        <h1 className="font-display font-bold text-4xl sm:text-5xl lg:text-6xl text-foreground mb-6">
+                        <h1 className="font-display font-bold text-3xl sm:text-5xl lg:text-6xl text-foreground mb-6 break-words">
                             Aprende con Factura Fácil
                         </h1>
                         <p className="text-lg text-muted-foreground">

@@ -8,7 +8,7 @@ import { faqsData } from "@/data/faq";
 
 const FAQ = () => {
   return (
-    <section id="faq" className="py-20 bg-background">
+    <section id="faq" className="py-20 bg-background overflow-hidden w-full">
       <div className="section-container max-w-4xl mx-auto">
         <div className="text-center mb-16">
           <span className="inline-block bg-accent/10 text-accent-foreground px-4 py-2 rounded-full text-sm font-medium mb-4">

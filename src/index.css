@@ -221,7 +221,22 @@
   }
 }
 
-/* Smooth scrolling */
+/* Smooth scrolling & overflow protection */
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
+  max-width: 100vw;
+  width: 100%;
+}
+
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+  width: 100%;
+}
+
+#root {
+  overflow-x: hidden;
+  max-width: 100vw;
+  width: 100%;
 }
