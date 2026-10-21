@@ -9,8 +9,7 @@ services:
       - traefik-net
     labels:
       - "traefik.enable=true"
-      # Ajusta el dominio a tu dominio real (ej. tudominio.com y www.tudominio.com)
-      - "traefik.http.routers.facturafacil.rule=Host(`${DOMAIN}`) || Host(`www.${DOMAIN}`)"
+      - "traefik.http.routers.facturafacil.rule=Host(`facturafacilco.cloud`) || Host(`www.facturafacilco.cloud`)"
       - "traefik.http.routers.facturafacil.entrypoints=websecure"
       - "traefik.http.routers.facturafacil.tls=true"
       - "traefik.http.routers.facturafacil.tls.certresolver=${CERT_RESOLVER:-letsencrypt}"
