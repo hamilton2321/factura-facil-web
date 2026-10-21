@@ -11,6 +11,7 @@ const Header = () => {
 
   const navLinks = [
     { href: isHomePage ? "#inicio" : "/#inicio", label: "Inicio", isRoute: false },
+    { href: isHomePage ? "#cotizador" : "/#cotizador", label: "Cotizador", isRoute: false },
     { href: isHomePage ? "#combos" : "/#combos", label: "Combos", isRoute: false },
     { href: isHomePage ? "#servicios" : "/#servicios", label: "Servicios", isRoute: false },
     { href: "/blog", label: "Blog", isRoute: true },

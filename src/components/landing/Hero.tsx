@@ -48,8 +48,8 @@ const Hero = () => {
 
             <div className="flex flex-col sm:flex-row gap-4">
               <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-display font-semibold text-lg h-14 px-8 shadow-lg hover:shadow-xl transition-all">
-                <a href="#contacto">
-                  ¡Cotiza Ahora!
+                <a href="#cotizador">
+                  ¡Cotiza a tu Medida!
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </a>
               </Button>

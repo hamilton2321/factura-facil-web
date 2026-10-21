@@ -1,6 +1,7 @@
 import Header from "@/components/landing/Header";
 import Hero from "@/components/landing/Hero";
 import ValueProposition from "@/components/landing/ValueProposition";
+import Cotizador from "@/components/landing/Cotizador";
 import Combos from "@/components/landing/Combos";
 import HardwareCatalog from "@/components/landing/HardwareCatalog";
 import Services from "@/components/landing/Services";
@@ -17,6 +18,7 @@ const Index = () => {
       <main className="w-full max-w-full overflow-x-hidden">
         <Hero />
         <ValueProposition />
+        <Cotizador />
         <Combos />
         <HardwareCatalog />
         <Services />
