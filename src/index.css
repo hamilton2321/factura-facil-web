@@ -1,0 +1,227 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Factura Fácil Design System
+   Primary: Deep Corporate Blue (#1E3A5F) - Trust & Professionalism
+   Accent: Vibrant Yellow (#F7B32B) - Energy & CTAs
+   All colors in HSL format
+*/
+
+@layer base {
+  :root {
+    /* Brand Colors */
+    --background: 0 0% 100%;
+    --foreground: 213 50% 24%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 213 50% 24%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 213 50% 24%;
+
+    /* Primary: Deep Corporate Blue */
+    --primary: 213 50% 24%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary: Light Blue-Gray */
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 213 50% 24%;
+
+    /* Muted: Soft Gray */
+    --muted: 210 20% 96%;
+    --muted-foreground: 215 16% 47%;
+
+    /* Accent: Vibrant Yellow */
+    --accent: 42 93% 57%;
+    --accent-foreground: 213 50% 15%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 42 93% 57%;
+
+    --radius: 0.75rem;
+
+    /* Custom Brand Tokens */
+    --brand-blue: 213 50% 24%;
+    --brand-blue-light: 213 45% 35%;
+    --brand-blue-dark: 213 55% 18%;
+    --brand-yellow: 42 93% 57%;
+    --brand-yellow-light: 42 93% 70%;
+    --brand-yellow-dark: 42 93% 45%;
+    --brand-gray: 210 20% 98%;
+    --brand-gray-dark: 210 10% 40%;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 hsl(213 50% 24% / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(213 50% 24% / 0.1);
+    --shadow-lg: 0 10px 15px -3px hsl(213 50% 24% / 0.1);
+    --shadow-xl: 0 20px 25px -5px hsl(213 50% 24% / 0.1);
+    --shadow-glow: 0 0 40px hsl(42 93% 57% / 0.3);
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 213 50% 24%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 42 93% 57%;
+  }
+
+  .dark {
+    --background: 213 55% 8%;
+    --foreground: 210 40% 98%;
+
+    --card: 213 50% 12%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 213 50% 12%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 42 93% 57%;
+    --primary-foreground: 213 50% 15%;
+
+    --secondary: 213 32% 20%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 213 32% 20%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 42 93% 57%;
+    --accent-foreground: 213 50% 15%;
+
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 213 32% 20%;
+    --input: 213 32% 20%;
+    --ring: 42 93% 57%;
+
+    --sidebar-background: 213 55% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 42 93% 57%;
+    --sidebar-primary-foreground: 213 50% 15%;
+    --sidebar-accent: 213 32% 18%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 213 32% 18%;
+    --sidebar-ring: 42 93% 57%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Montserrat', sans-serif;
+  }
+}
+
+@layer components {
+  .section-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .gradient-primary {
+    background: linear-gradient(135deg, hsl(var(--brand-blue)) 0%, hsl(var(--brand-blue-light)) 100%);
+  }
+
+  .gradient-accent {
+    background: linear-gradient(135deg, hsl(var(--brand-yellow)) 0%, hsl(var(--brand-yellow-light)) 100%);
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background: linear-gradient(135deg, hsl(var(--brand-blue)) 0%, hsl(var(--brand-blue-light)) 100%);
+  }
+
+  .hover-lift {
+    @apply transition-all duration-300 ease-out;
+  }
+
+  .hover-lift:hover {
+    @apply -translate-y-1;
+    box-shadow: var(--shadow-xl);
+  }
+
+  .glass-card {
+    @apply bg-background/80 backdrop-blur-md border border-border/50;
+  }
+}
+
+@layer utilities {
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-pulse-slow {
+    animation: pulse 3s ease-in-out infinite;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.6s ease-out;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.4s ease-out;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
