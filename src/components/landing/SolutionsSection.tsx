@@ -21,6 +21,11 @@ import { siteConfig } from "@/data/siteConfig";
 
 export default function SolutionsSection() {
   const [activeTab, setActiveTab] = useState<string>("cotizador");
+  const [combosWithDian, setCombosWithDian] = useState<boolean>(false);
+
+  const formatPriceCOP = (amount: number) => {
+    return "$" + amount.toLocaleString("es-CO") + " COP";
+  };
 
   const getItemIcon = (item: string) => {
     if (item.includes("Software")) return Package;
@@ -87,113 +92,169 @@ export default function SolutionsSection() {
 
           {/* TAB 2: Combos Populares */}
           <TabsContent value="combos" className="mt-0 focus-visible:outline-none animate-fade-in w-full max-w-full min-w-0">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-full">
-              {combosData.map((combo) => (
-                <div
-                  key={combo.id}
-                  className={`relative group rounded-2xl p-5 sm:p-6 transition-all duration-300 hover:-translate-y-2 flex flex-col justify-between ${
-                    combo.featured
-                      ? "bg-primary text-primary-foreground shadow-xl ring-2 ring-accent"
-                      : "bg-background border border-border shadow-sm hover:shadow-xl"
+            {/* Modalidad de Combos: POS Tradicional vs Con Facturación Electrónica DIAN (+ $100k) */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mb-8 bg-card border border-border p-3.5 sm:p-4 rounded-2xl max-w-3xl mx-auto shadow-xs">
+              <div className="text-center sm:text-left min-w-0">
+                <span className="font-display font-bold text-xs sm:text-sm text-foreground block">
+                  ¿Deseas incluir Facturación Electrónica DIAN?
+                </span>
+                <span className="text-[11px] text-muted-foreground">
+                  Todos los combos incluyen <strong>Software POS Vitalicio</strong> ($650k). Añade DIAN por solo <strong className="text-primary">+$100.000 COP</strong> (Tarifa normal: $750.000/año).
+                </span>
+              </div>
+
+              <div className="flex items-center gap-1.5 bg-muted p-1 rounded-xl shrink-0 border border-border/60">
+                <button
+                  type="button"
+                  onClick={() => setCombosWithDian(false)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                    !combosWithDian
+                      ? "bg-background text-foreground shadow-xs"
+                      : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  {combo.badge && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-accent text-accent-foreground px-4 py-1 rounded-full text-xs font-bold shadow whitespace-nowrap">
-                      {combo.badge}
-                    </div>
-                  )}
+                  POS Tradicional
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCombosWithDian(true)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                    combosWithDian
+                      ? "gradient-primary text-primary-foreground shadow-xs"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <span>+ DIAN</span>
+                  <span className="text-[10px] bg-accent text-accent-foreground px-1.5 py-0.2 rounded font-black shadow-2xs">
+                    +$100k
+                  </span>
+                </button>
+              </div>
+            </div>
 
-                  <div>
-                    {/* Sector Tag */}
-                    {combo.sectorTag && (
-                      <span className={`inline-block text-[11px] font-bold px-2.5 py-0.5 rounded-full mb-3 ${
-                        combo.featured ? "bg-white/20 text-white" : "bg-muted text-muted-foreground"
-                      }`}>
-                        {combo.sectorTag}
-                      </span>
-                    )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-full">
+              {combosData.map((combo) => {
+                const currentPrice = combosWithDian
+                  ? formatPriceCOP(combo.priceNum + 100000)
+                  : combo.price;
 
-                    <div className="relative aspect-video w-full overflow-hidden rounded-xl mb-4 bg-white p-3 sm:p-4 flex items-center justify-center border border-border/50">
-                      <img
-                        src={combo.image}
-                        alt={combo.title}
-                        loading="lazy"
-                        decoding="async"
-                        width={400}
-                        height={225}
-                        className="w-full h-full object-contain hover:scale-105 transition-transform duration-500"
-                      />
-                    </div>
+                const whatsappText = combosWithDian
+                  ? `¡Hola Factura Fácil! 🚀 Me interesa ordenar el ${combo.title} con Facturación Electrónica DIAN por ${currentPrice} (Licencia Vitalicia POS incluida). ¿Me confirman disponibilidad y tiempos de entrega?`
+                  : `¡Hola Factura Fácil! 🚀 Me interesa ordenar el ${combo.title} por ${combo.price} con Licencia Vitalicia POS. ¿Me confirman disponibilidad y tiempos de entrega?`;
 
-                    <h3
-                      className={`font-display font-bold text-lg mb-1 ${
-                        combo.featured ? "text-primary-foreground" : "text-foreground"
-                      }`}
-                    >
-                      {combo.title}
-                    </h3>
-
-                    {/* Official Price & Savings */}
-                    <div className="my-2">
-                      <div className={`font-display font-extrabold text-2xl tracking-tight leading-none ${
-                        combo.featured ? "text-accent" : "text-primary"
-                      }`}>
-                        {combo.price}
-                      </div>
-                      {combo.savings && (
-                        <span className={`inline-block mt-1.5 text-[11px] font-bold px-2 py-0.5 rounded ${
-                          combo.featured ? "bg-accent/20 text-accent" : "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                        }`}>
-                          {combo.savings}
-                        </span>
-                      )}
-                    </div>
-
-                    <p
-                      className={`text-xs mt-2 mb-4 line-clamp-2 ${
-                        combo.featured ? "text-primary-foreground/80" : "text-muted-foreground"
-                      }`}
-                    >
-                      {combo.subtitle}
-                    </p>
-
-                    <ul className="space-y-2 mb-5">
-                      {combo.items.map((item) => {
-                        const ItemIcon = getItemIcon(item);
-                        return (
-                          <li key={item} className="flex items-center gap-2 text-xs">
-                            <ItemIcon className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
-                            <span className={combo.featured ? "text-primary-foreground/90" : "text-foreground/80"}>
-                              {item}
-                            </span>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
-
-                  <Button
-                    asChild
-                    className={`w-full font-display font-semibold text-sm h-11 ${
+                return (
+                  <div
+                    key={combo.id}
+                    className={`relative group rounded-2xl p-5 sm:p-6 transition-all duration-300 hover:-translate-y-2 flex flex-col justify-between ${
                       combo.featured
-                        ? "bg-accent text-accent-foreground hover:bg-accent/90"
-                        : "bg-primary text-primary-foreground hover:bg-primary/90"
+                        ? "bg-primary text-primary-foreground shadow-xl ring-2 ring-accent"
+                        : "bg-background border border-border shadow-sm hover:shadow-xl"
                     }`}
                   >
-                    <a
-                      href={`https://wa.me/${siteConfig.whatsappNumber}?text=${encodeURIComponent(
-                        `¡Hola Factura Fácil! 🚀 Me interesa ordenar el ${combo.title} por ${combo.price} con Licencia Vitalicia. ¿Me confirman disponibilidad y tiempos de entrega?`
-                      )}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center gap-2"
+                    {combo.badge && (
+                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-accent text-accent-foreground px-4 py-1 rounded-full text-xs font-bold shadow whitespace-nowrap">
+                        {combo.badge}
+                      </div>
+                    )}
+
+                    <div>
+                      {/* Sector Tag */}
+                      {combo.sectorTag && (
+                        <span className={`inline-block text-[11px] font-bold px-2.5 py-0.5 rounded-full mb-3 ${
+                          combo.featured ? "bg-white/20 text-white" : "bg-muted text-muted-foreground"
+                        }`}>
+                          {combo.sectorTag}
+                        </span>
+                      )}
+
+                      <div className="relative aspect-video w-full overflow-hidden rounded-xl mb-4 bg-white p-3 sm:p-4 flex items-center justify-center border border-border/50">
+                        <img
+                          src={combo.image}
+                          alt={combo.title}
+                          loading="lazy"
+                          decoding="async"
+                          width={400}
+                          height={225}
+                          className="w-full h-full object-contain hover:scale-105 transition-transform duration-500"
+                        />
+                      </div>
+
+                      <h3
+                        className={`font-display font-bold text-lg mb-1 ${
+                          combo.featured ? "text-primary-foreground" : "text-foreground"
+                        }`}
+                      >
+                        {combo.title}
+                      </h3>
+
+                      {/* Official Price & Savings / DIAN Mode */}
+                      <div className="my-2">
+                        <div className={`font-display font-extrabold text-2xl tracking-tight leading-none ${
+                          combo.featured ? "text-accent" : "text-primary"
+                        }`}>
+                          {currentPrice}
+                        </div>
+                        {combosWithDian ? (
+                          <span className={`inline-block mt-1.5 text-[11px] font-bold px-2 py-0.5 rounded ${
+                            combo.featured
+                              ? "bg-accent/20 text-accent border border-accent/30"
+                              : "bg-primary/10 text-primary border border-primary/20"
+                          }`}>
+                            + Facturación DIAN 1er año
+                          </span>
+                        ) : combo.savings ? (
+                          <span className={`inline-block mt-1.5 text-[11px] font-bold px-2 py-0.5 rounded ${
+                            combo.featured ? "bg-accent/20 text-accent" : "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                          }`}>
+                            {combo.savings}
+                          </span>
+                        ) : null}
+                      </div>
+
+                      <p
+                        className={`text-xs mt-2 mb-4 line-clamp-2 ${
+                          combo.featured ? "text-primary-foreground/80" : "text-muted-foreground"
+                        }`}
+                      >
+                        {combo.subtitle}
+                      </p>
+
+                      <ul className="space-y-2 mb-5">
+                        {combo.items.map((item) => {
+                          const ItemIcon = getItemIcon(item);
+                          return (
+                            <li key={item} className="flex items-center gap-2 text-xs">
+                              <ItemIcon className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
+                              <span className={combo.featured ? "text-primary-foreground/90" : "text-foreground/80"}>
+                                {item}
+                              </span>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+
+                    <Button
+                      asChild
+                      className={`w-full font-display font-semibold text-sm h-11 ${
+                        combo.featured
+                          ? "bg-accent text-accent-foreground hover:bg-accent/90"
+                          : "bg-primary text-primary-foreground hover:bg-primary/90"
+                      }`}
                     >
-                      <MessageCircle className="w-4 h-4" />
-                      Pedir por WhatsApp
-                    </a>
-                  </Button>
-                </div>
-              ))}
+                      <a
+                        href={`https://wa.me/${siteConfig.whatsappNumber}?text=${encodeURIComponent(whatsappText)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center gap-2"
+                      >
+                        <MessageCircle className="w-4 h-4" />
+                        Pedir por WhatsApp
+                      </a>
+                    </Button>
+                  </div>
+                );
+              })}
             </div>
 
             {/* Hint to use Cotizador */}

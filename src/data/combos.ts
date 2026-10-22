@@ -5,6 +5,7 @@ export interface ComboItem {
   title: string;
   subtitle: string;
   price: string;
+  priceNum: number;
   regularPrice?: string;
   savings?: string;
   items: string[];
@@ -16,8 +17,9 @@ export interface ComboItem {
 }
 
 /**
- * Catálogo Oficial de Combos POS Factura Fácil Colombia (Sincronizado con Stitch).
- * Precios reales en pesos colombianos (COP) con Hardware + Software POS Licencia Vitalicia.
+ * Catálogo Oficial de Combos POS Factura Fácil Colombia.
+ * Precios base en COP con Hardware + Software POS Licencia Vitalicia ($650.000 incluido).
+ * Opción promocional: +$100.000 COP con Facturación Electrónica DIAN primer año (precio regular $750.000/año).
  */
 export const combosData: ComboItem[] = [
   {
@@ -26,6 +28,7 @@ export const combosData: ComboItem[] = [
     title: "Combo PC Escritorio",
     subtitle: "Incluye computador corporativo remanufacturado, impresora térmica 58mm, cajón monedero, lector de código de barras y software POS Licencia Vitalicia.",
     price: "$1.599.000 COP",
+    priceNum: 1599000,
     savings: "Ahorras $51.000",
     sectorTag: "Ferreterías & Comercio General",
     items: [
@@ -44,6 +47,7 @@ export const combosData: ComboItem[] = [
     title: "Combo PC All in One",
     subtitle: "Incluye computador All in One remanufacturado, impresora térmica 58mm, cajón monedero, lector de código de barras y software POS Licencia Vitalicia.",
     price: "$2.019.000 COP",
+    priceNum: 2019000,
     savings: "Ahorras $181.000",
     badge: "Más Popular",
     sectorTag: "Boutiques, Ropa & Droguerías",
@@ -63,6 +67,7 @@ export const combosData: ComboItem[] = [
     title: "Combo PC Touch",
     subtitle: "Incluye computador de pantalla táctil totalmente nuevo, impresora térmica 58mm, cajón monedero, lector de código de barras y software POS Licencia Vitalicia.",
     price: "$3.209.000 COP",
+    priceNum: 3209000,
     savings: "Ahorras $236.000",
     badge: "Gastronómico Pro",
     sectorTag: "Restaurantes, Bares & Cafés",
@@ -82,6 +87,7 @@ export const combosData: ComboItem[] = [
     title: "Combo PC + Balanza",
     subtitle: "Incluye computador corporativo remanufacturado, balanza comercial HY918 nueva, impresora térmica 58mm, cajón monedero, lector de código de barras y software POS Licencia Vitalicia.",
     price: "$2.029.000 COP",
+    priceNum: 2029000,
     savings: "Ahorras $71.000",
     badge: "Venta por Peso",
     sectorTag: "Minimarkets, Fruvers & Carnicerías",

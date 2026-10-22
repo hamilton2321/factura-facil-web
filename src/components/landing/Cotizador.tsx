@@ -14,6 +14,7 @@ import {
   Phone,
   Mail,
   MapPin,
+  FileCheck,
   ShieldCheck,
   Eye,
   Tag,
@@ -31,7 +32,7 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { siteConfig } from "@/data/siteConfig";
-import { cotizadorData } from "@/data/cotizador";
+import { cotizadorData, dianPromotion } from "@/data/cotizador";
 import { syncLeadToTwenty } from "@/services/crm";
 
 const formatCOP = (amount: number) => {
@@ -48,6 +49,7 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
   // State
   const [selectedBusinessType, setSelectedBusinessType] = useState<string>("supermercados");
   const [selectedBaseId, setSelectedBaseId] = useState<string>("allinone");
+  const [includeDian, setIncludeDian] = useState<boolean>(false);
   const [selectedAddons, setSelectedAddons] = useState<string[]>([
     "impresora-58",
     "cajon",
@@ -76,7 +78,7 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
     [selectedBaseId]
   );
 
-  // Calculations with 10% Multicaja discount (from Stitch specs)
+  // Calculations with Optional DIAN promo and 10% Multicaja discount
   const addonsTotal = useMemo(() => {
     return selectedAddons.reduce((sum, addonId) => {
       const item = cotizadorData.addons.find((a) => a.id === addonId);
@@ -84,8 +86,9 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
     }, 0);
   }, [selectedAddons]);
 
+  const dianPricePerUnit = includeDian ? dianPromotion.firstTimePromoPrice : 0;
   const unitBasePrice = currentBase.price;
-  const unitTotal = unitBasePrice + addonsTotal;
+  const unitTotal = unitBasePrice + addonsTotal + dianPricePerUnit;
   const subtotalAll = unitTotal * cajasCount;
   
   // 10% discount starting at 2 cash registers
@@ -124,13 +127,18 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
       ? `\n🎉 Descuento Multicaja (10%): -${formatCOP(discountAmount)} COP`
       : "";
 
+    const dianStatusText = includeDian
+      ? `  • Facturación Electrónica DIAN: ACTIVADA (+ ${formatCOP(dianPromotion.firstTimePromoPrice)} promo 1er año)`
+      : `  • Facturación Electrónica: No requerida (Solo POS Tradicional)`;
+
     const text =
       `¡Hola ${siteConfig.name}! 🚀 Acabo de armar mi cotización oficial en la página web:\n\n` +
       `🏢 Tipo de negocio: ${currentBusiness.name}\n` +
       `💻 Equipo base: ${currentBase.name} (${formatCOP(currentBase.price)})\n` +
+      `⚡ Modalidad de Facturación:\n${dianStatusText}\n` +
       `🖨️ Periféricos seleccionados:\n${addonsListText}\n` +
       `📦 Puntos de venta (cajas): ${cajasCount} ${cajasCount === 1 ? "caja" : "cajas"}\n` +
-      `🎁 Incluye: Software POS Licencia Vitalicia ($0) + Certificado DIAN ($0)${discountText}\n` +
+      `🎁 Incluye: Software POS Licencia Vitalicia ($650k valor incluido) + Soporte${discountText}\n` +
       `💰 Total inversión estimada: ${formatCOP(grandTotal)} COP\n\n` +
       `¿Me podrían confirmar disponibilidad, medios de pago y tiempos de entrega? Gracias.`;
 
@@ -372,6 +380,100 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
             </div>
           </div>
 
+          {/* MÓDULO OPCIONAL: Facturación Electrónica DIAN */}
+          <div className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-7 border border-border shadow-sm w-full max-w-full min-w-0">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-accent/15 text-accent-foreground flex items-center justify-center shrink-0">
+                  <FileCheck className="w-4 h-4 text-accent" />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="font-display font-semibold text-base sm:text-lg text-foreground truncate">
+                    ¿Deseas activar Facturación Electrónica DIAN?
+                  </h3>
+                  <p className="text-xs text-muted-foreground truncate">
+                    Por defecto tu sistema incluye Software POS Vitalicio. Añade DIAN a precio especial por compra de equipo.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full min-w-0">
+              {/* Opción 1: Solo POS Tradicional (Default) */}
+              <div
+                onClick={() => setIncludeDian(false)}
+                className={`cursor-pointer p-3.5 sm:p-4 rounded-xl border transition-all flex items-start gap-3 select-none ${
+                  !includeDian
+                    ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-xs"
+                    : "border-border/80 hover:border-primary/40 bg-background"
+                }`}
+              >
+                <div
+                  className={`w-4 h-4 sm:w-5 sm:h-5 mt-0.5 rounded-full flex items-center justify-center border shrink-0 transition-colors ${
+                    !includeDian
+                      ? "bg-primary border-primary text-primary-foreground"
+                      : "border-muted-foreground/40"
+                  }`}
+                >
+                  {!includeDian && <Check className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5" />}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-1 mb-0.5">
+                    <span className="font-bold text-xs sm:text-sm text-foreground">
+                      Solo POS Tradicional
+                    </span>
+                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                      INCLUIDO ($0)
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground leading-snug">
+                    Licencia Software POS Vitalicia sin mensualidades. Para control de inventarios, caja y ventas en tirilla.
+                  </p>
+                </div>
+              </div>
+
+              {/* Opción 2: Con Facturación Electrónica DIAN */}
+              <div
+                onClick={() => setIncludeDian(true)}
+                className={`cursor-pointer p-3.5 sm:p-4 rounded-xl border transition-all flex items-start gap-3 select-none relative overflow-hidden ${
+                  includeDian
+                    ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-xs"
+                    : "border-border/80 hover:border-primary/40 bg-background"
+                }`}
+              >
+                <div className="absolute top-0 right-0 bg-accent text-accent-foreground font-extrabold text-[9px] px-2 py-0.5 rounded-bl shadow">
+                  Ahorras $650.000
+                </div>
+                <div
+                  className={`w-4 h-4 sm:w-5 sm:h-5 mt-0.5 rounded-full flex items-center justify-center border shrink-0 transition-colors ${
+                    includeDian
+                      ? "bg-primary border-primary text-primary-foreground"
+                      : "border-muted-foreground/40"
+                  }`}
+                >
+                  {includeDian && <Check className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5" />}
+                </div>
+                <div className="flex-1 min-w-0 pr-6">
+                  <div className="flex items-center justify-between gap-1 mb-0.5">
+                    <span className="font-bold text-xs sm:text-sm text-foreground">
+                      Activar Facturación DIAN
+                    </span>
+                    <span className="text-xs font-black text-primary">
+                      +{formatCOP(dianPromotion.firstTimePromoPrice)}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground leading-snug">
+                    Tarifa promocional 1er año con tu equipo.{" "}
+                    <span className="line-through text-muted-foreground/70">
+                      {formatCOP(dianPromotion.regularAnnualPrice)}/año
+                    </span>{" "}
+                    precio regular.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* STEP 3: Periféricos y Hardware adicional */}
           <div className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-7 border border-border shadow-sm w-full max-w-full min-w-0">
             <div className="flex items-center gap-3 mb-5">
@@ -383,7 +485,7 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
                   Añade Periféricos Modulares
                 </h3>
                 <p className="text-xs sm:text-sm text-muted-foreground truncate">
-                  Componentes certificados que operan en sincronía nativa con Factura Fácil DIAN
+                  Componentes certificados que operan en sincronía nativa con Factura Fácil
                 </p>
               </div>
             </div>
@@ -532,20 +634,37 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
                 </div>
               )}
 
-              {/* Free Bonuses Included (from Stitch design) */}
-              <div className="pt-2 space-y-1 border-t border-border/50 text-[11px]">
+              {/* Free Bonuses & Software / DIAN Status */}
+              <div className="pt-2 space-y-1.5 border-t border-border/50 text-[11px]">
                 <div className="flex items-center justify-between text-secondary font-medium">
                   <span className="flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-accent shrink-0" /> Software POS Licencia Vitalicia
+                    <CheckCircle2 className="w-3.5 h-3.5 text-accent shrink-0" /> Software POS Licencia Vitalicia ($650k)
                   </span>
                   <span className="font-bold text-secondary">INCLUIDO ($0)</span>
                 </div>
-                <div className="flex items-center justify-between text-secondary font-medium">
-                  <span className="flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-accent shrink-0" /> Certificado & Homologación DIAN
-                  </span>
-                  <span className="font-bold text-secondary">INCLUIDO ($0)</span>
-                </div>
+
+                {includeDian ? (
+                  <div className="flex items-center justify-between text-foreground font-semibold bg-primary/5 p-2 rounded-lg border border-primary/20">
+                    <div className="min-w-0 pr-1">
+                      <span className="flex items-center gap-1 text-primary">
+                        <Sparkles className="w-3.5 h-3.5 text-accent shrink-0" /> Facturación Electrónica DIAN
+                      </span>
+                      <span className="text-[10px] text-muted-foreground block">
+                        Promo 1er año ({cajasCount} {cajasCount === 1 ? "equipo" : "equipos"})
+                      </span>
+                    </div>
+                    <span className="font-bold text-primary shrink-0">
+                      +{formatCOP(dianPromotion.firstTimePromoPrice * cajasCount)}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-between text-muted-foreground">
+                    <span className="flex items-center gap-1">
+                      <Check className="w-3.5 h-3.5 text-muted-foreground/60 shrink-0" /> Facturación Electrónica DIAN
+                    </span>
+                    <span className="text-[10px] bg-muted px-1.5 py-0.2 rounded font-medium">No requerida ($0)</span>
+                  </div>
+                )}
               </div>
 
               {/* Multicaja Discount Row */}

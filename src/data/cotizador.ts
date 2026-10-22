@@ -46,6 +46,12 @@ export interface HardwareAddon {
   defaultSelected?: boolean;
 }
 
+export const dianPromotion = {
+  firstTimePromoPrice: 100000, // +$100.000 COP promo 1er año al comprar con cualquier combo/equipo
+  regularAnnualPrice: 750000,  // Precio normal anualidad $750.000 COP
+  savings: 650000,             // Ahorro de $650.000
+};
+
 export const cotizadorData = {
   title: "Cotizador Interactivo de Sistemas POS",
   subtitle: "Personaliza tu solución a la medida en tiempo real con precios oficiales de Factura Fácil Colombia.",
@@ -105,14 +111,14 @@ export const cotizadorData = {
   baseOptions: [
     {
       id: "solo-software",
-      name: "Software con Facturación DIAN",
-      tagline: "Si ya tienes tu propio computador",
-      description: "Licencia completa de Software POS Factura Fácil con Facturación Electrónica DIAN y soporte ilimitado.",
-      price: 799000,
+      name: "Software POS Licencia Vitalicia",
+      tagline: "Para usar en tu propio computador",
+      description: "Licencia de Software POS Factura Fácil de por vida sin mensualidades ni pagos obligatorios por factura.",
+      price: 650000,
       icon: Sparkles,
       includes: [
-        "Software POS Licencia Vitalicia",
-        "Módulo Facturación Electrónica DIAN",
+        "Software POS Licencia Vitalicia ($650.000)",
+        "Control de ventas, caja e inventarios",
         "Instalación y configuración remota",
         "Capacitación inicial para cajeros",
       ],
@@ -127,7 +133,7 @@ export const cotizadorData = {
       includes: [
         "PC Torre Corporativo Remanufacturado",
         "Monitor LED + Teclado y Mouse",
-        "Software POS DIAN configurado",
+        "Software POS Licencia Vitalicia ($650k)",
         "1 año de garantía en hardware",
       ],
     },
@@ -141,7 +147,7 @@ export const cotizadorData = {
       icon: Laptop,
       includes: [
         "PC All In One Corporativo Integrado",
-        "Software POS DIAN configurado",
+        "Software POS Licencia Vitalicia ($650k)",
         "1 año de garantía en hardware",
         "Capacitación y soporte incluido",
       ],
@@ -155,7 +161,7 @@ export const cotizadorData = {
       icon: Smartphone,
       includes: [
         "Pantalla Táctil Touch POS 100% Nueva",
-        "Software POS optimizado para toque",
+        "Software POS Licencia Vitalicia ($650k)",
         "1 año de garantía en hardware",
         "Soporte técnico prioritario",
       ],

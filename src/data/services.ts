@@ -1,4 +1,4 @@
-import { FileCheck, BarChart3, Network, Headphones, ShieldCheck, Globe, type LucideIcon } from "lucide-react";
+import { FileCheck, BarChart3, Network, Globe, type LucideIcon } from "lucide-react";
 
 export interface ServiceItem {
   icon: LucideIcon;
@@ -10,31 +10,33 @@ export interface ServiceItem {
 }
 
 /**
- * Catálogo Oficial de Software y Servicios DIAN Factura Fácil Colombia (Sincronizado con Stitch).
+ * Catálogo Oficial de Software y Servicios Factura Fácil Colombia.
+ * - Software POS Vitalicio: $650.000 COP (pago único)
+ * - Facturación Electrónica DIAN: $750.000 COP / año (o promo +$100.000 COP primer año en combos)
  */
 export const servicesData: ServiceItem[] = [
   {
-    icon: FileCheck,
-    title: "Software con Facturación Electrónica DIAN",
-    description: "Cumplimiento fiscal DIAN completo bajo la Resolución 000042 y Anexo 1.9. Genera documentos electrónicos y POS ilimitados.",
-    price: "$799.000 COP",
-    highlight: "100% Homologado DIAN",
+    icon: BarChart3,
+    title: "Software POS Licencia Vitalicia",
+    description: "Ideal para el control completo de tu negocio: ventas rápidas, inventarios, kardex y arqueos de caja sin mensualidades obligatorias.",
+    price: "$650.000 COP",
+    highlight: "Pago Único Vitalicio",
     features: [
-      "Validación previa CUFE en tiempo real",
-      "Documentos y tirillas ilimitadas",
-      "Firma y certificado digital incluido",
+      "Licencia de por vida sin mensualidades",
+      "Control de stock, kardex y alertas de inventario",
+      "Cierres de caja diarios (X y Z)",
     ],
   },
   {
-    icon: BarChart3,
-    title: "Software Facturación POS Básico",
-    description: "Ideal para control interno de ventas, caja e inventarios antes de pasar a la obligatoriedad electrónica.",
-    price: "$649.000 COP",
-    highlight: "Gestión Interna",
+    icon: FileCheck,
+    title: "Facturación Electrónica DIAN (Anualidad)",
+    description: "Cumplimiento fiscal completo bajo Resolución DIAN vigente. Documentos ilimitados. (¡Llévalo por solo +$100.000 el 1er año al comprar tu combo!).",
+    price: "$750.000 COP / año",
+    highlight: "100% Homologado DIAN",
     features: [
-      "Kardex y control de stock en vivo",
-      "Cierres de caja (X y Z)",
-      "Reportes de ganancias por producto",
+      "Promo en combo: solo +$100.000 COP primer año",
+      "Validación previa CUFE y XML en tiempo real",
+      "Firma digital y soporte técnico DIAN incluido",
     ],
   },
   {
