@@ -9,7 +9,7 @@ const WhatsAppButton = () => {
       href={whatsappUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-50 group select-none"
+      className="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 lg:right-auto lg:left-6 z-50 group select-none"
       aria-label="Contactar por WhatsApp"
     >
       <div className="relative">

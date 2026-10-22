@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Phone } from "lucide-react";
+import { Menu, X, Phone, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/data/siteConfig";
 
@@ -8,6 +8,7 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
   const isHomePage = location.pathname === "/";
+  const whatsappUrl = `https://wa.me/${siteConfig.whatsappNumber}?text=${encodeURIComponent(siteConfig.defaultWhatsAppMessage)}`;
 
   const navLinks = [
     { href: isHomePage ? "#inicio" : "/#inicio", label: "Inicio", isRoute: false },
@@ -68,12 +69,24 @@ const Header = () => {
             )}
           </nav>
 
-          {/* CTA Button */}
-          <div className="hidden md:flex items-center gap-4">
-            <a href={`tel:${siteConfig.phoneTel}`} className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+          {/* CTA Buttons */}
+          <div className="hidden md:flex items-center gap-3 lg:gap-4">
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/30 text-xs font-semibold transition-all hover:scale-105"
+              title="Chatear por WhatsApp"
+            >
+              <MessageCircle className="w-3.5 h-3.5" />
+              <span>¿Ayuda?</span>
+            </a>
+
+            <a href={`tel:${siteConfig.phoneTel}`} className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors">
               <Phone className="w-4 h-4" />
               <span className="text-sm font-medium">{siteConfig.phoneDisplay}</span>
             </a>
+
             <Button asChild className="bg-accent text-accent-foreground hover:bg-accent/90 font-display font-semibold">
               {isHomePage ? (
                 <a href="#contacto">¡Cotiza Ahora!</a>
