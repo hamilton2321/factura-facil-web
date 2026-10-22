@@ -31,69 +31,66 @@ export default function SolutionsSection() {
   };
 
   return (
-    <section id="soluciones" className="py-20 lg:py-24 bg-muted/30 overflow-hidden w-full max-w-full relative">
-      <div className="section-container relative z-10">
+    <section id="soluciones" className="py-16 sm:py-20 lg:py-24 bg-muted/30 overflow-hidden w-full max-w-full relative">
+      <div className="section-container relative z-10 w-full max-w-full min-w-0">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-10">
-          <Badge className="mb-4 bg-accent/15 text-accent-foreground border-accent/20 px-3 py-1 text-sm font-semibold inline-flex items-center gap-1.5">
-            <Package className="w-4 h-4 text-accent" />
+        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-10 px-2">
+          <Badge className="mb-3 bg-accent/15 text-accent-foreground border-accent/20 px-3 py-1 text-xs sm:text-sm font-semibold inline-flex items-center gap-1.5">
+            <Package className="w-3.5 h-3.5 text-accent" />
             Catálogo & Soluciones POS
           </Badge>
-          <h2 className="font-display font-bold text-3xl sm:text-4xl lg:text-5xl text-foreground mb-4">
+          <h2 className="font-display font-bold text-2xl sm:text-4xl lg:text-5xl text-foreground mb-3 sm:mb-4">
             Equipa tu Negocio con lo que Necesitas
           </h2>
-          <p className="text-muted-foreground text-base sm:text-lg">
+          <p className="text-muted-foreground text-sm sm:text-lg">
             Elige armar tu cotización interactiva paso a paso o explorar nuestros combos pre-configurados listos para operar.
           </p>
         </div>
 
-        {/* Tab Selector */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <div className="flex justify-center mb-10">
-            <TabsList className="bg-background/90 border border-border p-1.5 rounded-2xl shadow-sm h-auto flex flex-wrap gap-1 max-w-2xl justify-center">
+        {/* Tab Selector - Responsive 3-column grid without overflow */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full max-w-full min-w-0">
+          <div className="flex justify-center mb-8 w-full max-w-full px-2">
+            <TabsList className="bg-background border border-border p-1 rounded-2xl shadow-sm h-auto grid grid-cols-3 w-full max-w-lg mx-auto">
               <TabsTrigger
                 value="cotizador"
                 id="cotizador-tab"
-                className="rounded-xl px-5 py-3 font-display font-semibold text-sm sm:text-base data-[state=active]:gradient-primary data-[state=active]:text-primary-foreground transition-all flex items-center gap-2"
+                className="rounded-xl py-2 sm:py-2.5 px-1 sm:px-3 font-display font-semibold text-xs sm:text-sm data-[state=active]:gradient-primary data-[state=active]:text-primary-foreground transition-all flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 text-center min-w-0 truncate"
               >
-                <Calculator className="w-4 h-4" />
-                <span>Cotizador a tu Medida</span>
-                <span className="text-[10px] bg-accent text-accent-foreground px-2 py-0.5 rounded-full uppercase tracking-wider font-bold hidden sm:inline-block">
-                  Interactivo
-                </span>
+                <Calculator className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                <span className="truncate">Cotizador</span>
               </TabsTrigger>
 
               <TabsTrigger
                 value="combos"
                 id="combos-populares"
-                className="rounded-xl px-5 py-3 font-display font-semibold text-sm sm:text-base data-[state=active]:gradient-primary data-[state=active]:text-primary-foreground transition-all flex items-center gap-2"
+                className="rounded-xl py-2 sm:py-2.5 px-1 sm:px-3 font-display font-semibold text-xs sm:text-sm data-[state=active]:gradient-primary data-[state=active]:text-primary-foreground transition-all flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 text-center min-w-0 truncate"
               >
-                <Package className="w-4 h-4" />
-                <span>Combos Listos</span>
+                <Package className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                <span className="truncate">Combos</span>
               </TabsTrigger>
 
               <TabsTrigger
                 value="hardware"
-                className="rounded-xl px-5 py-3 font-display font-semibold text-sm sm:text-base data-[state=active]:gradient-primary data-[state=active]:text-primary-foreground transition-all flex items-center gap-2"
+                className="rounded-xl py-2 sm:py-2.5 px-1 sm:px-3 font-display font-semibold text-xs sm:text-sm data-[state=active]:gradient-primary data-[state=active]:text-primary-foreground transition-all flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 text-center min-w-0 truncate"
               >
-                <Cpu className="w-4 h-4" />
-                <span>Hardware & Periféricos</span>
+                <Cpu className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                <span className="truncate">Hardware</span>
               </TabsTrigger>
             </TabsList>
           </div>
 
           {/* TAB 1: Cotizador Interactivo */}
-          <TabsContent value="cotizador" className="mt-0 focus-visible:outline-none">
+          <TabsContent value="cotizador" className="mt-0 focus-visible:outline-none w-full max-w-full min-w-0">
             <Cotizador isEmbedded />
           </TabsContent>
 
           {/* TAB 2: Combos Populares */}
-          <TabsContent value="combos" className="mt-0 focus-visible:outline-none animate-fade-in">
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <TabsContent value="combos" className="mt-0 focus-visible:outline-none animate-fade-in w-full max-w-full min-w-0">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-full">
               {combosData.map((combo) => (
                 <div
                   key={combo.id}
-                  className={`relative group rounded-2xl p-6 transition-all duration-300 hover:-translate-y-2 flex flex-col justify-between ${
+                  className={`relative group rounded-2xl p-5 sm:p-6 transition-all duration-300 hover:-translate-y-2 flex flex-col justify-between ${
                     combo.featured
                       ? "bg-primary text-primary-foreground shadow-xl ring-2 ring-accent"
                       : "bg-background border border-border shadow-sm hover:shadow-xl"
@@ -106,7 +103,7 @@ export default function SolutionsSection() {
                   )}
 
                   <div>
-                    <div className="relative aspect-video w-full overflow-hidden rounded-xl mb-6 bg-white p-4 flex items-center justify-center border border-border/50">
+                    <div className="relative aspect-video w-full overflow-hidden rounded-xl mb-5 bg-white p-3 sm:p-4 flex items-center justify-center border border-border/50">
                       <img
                         src={combo.image}
                         alt={combo.title}
@@ -119,11 +116,11 @@ export default function SolutionsSection() {
                     </div>
 
                     <div
-                      className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${
+                      className={`w-11 h-11 rounded-xl flex items-center justify-center mb-4 ${
                         combo.featured ? "bg-primary-foreground/20" : "gradient-primary"
                       }`}
                     >
-                      <combo.icon className="w-6 h-6 text-primary-foreground" />
+                      <combo.icon className="w-5 h-5 text-primary-foreground" />
                     </div>
 
                     <h3
@@ -135,19 +132,19 @@ export default function SolutionsSection() {
                     </h3>
 
                     <p
-                      className={`text-xs mb-5 line-clamp-2 ${
+                      className={`text-xs mb-4 line-clamp-2 ${
                         combo.featured ? "text-primary-foreground/80" : "text-muted-foreground"
                       }`}
                     >
                       {combo.subtitle}
                     </p>
 
-                    <ul className="space-y-2.5 mb-6">
+                    <ul className="space-y-2 mb-5">
                       {combo.items.map((item) => {
                         const ItemIcon = getItemIcon(item);
                         return (
                           <li key={item} className="flex items-center gap-2 text-xs">
-                            <ItemIcon className="w-4 h-4 flex-shrink-0 text-accent" />
+                            <ItemIcon className="w-3.5 h-3.5 flex-shrink-0 text-accent" />
                             <span className={combo.featured ? "text-primary-foreground/90" : "text-foreground/80"}>
                               {item}
                             </span>
@@ -182,7 +179,7 @@ export default function SolutionsSection() {
             </div>
 
             {/* Hint to use Cotizador */}
-            <div className="mt-10 text-center p-6 bg-card rounded-2xl border border-border/60 max-w-2xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="mt-10 text-center p-5 sm:p-6 bg-card rounded-2xl border border-border/60 max-w-2xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="text-left">
                 <p className="font-semibold text-foreground text-sm">¿Buscas algo diferente o varios equipos?</p>
                 <p className="text-xs text-muted-foreground">Usa nuestro cotizador para armar una propuesta exacta.</p>
@@ -199,12 +196,12 @@ export default function SolutionsSection() {
           </TabsContent>
 
           {/* TAB 3: Hardware y Periféricos */}
-          <TabsContent value="hardware" className="mt-0 focus-visible:outline-none animate-fade-in">
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <TabsContent value="hardware" className="mt-0 focus-visible:outline-none animate-fade-in w-full max-w-full min-w-0">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-full">
               {hardwareData.map((product) => (
                 <div
                   key={product.title}
-                  className="group bg-background rounded-2xl p-5 shadow-sm hover:shadow-xl transition-all duration-300 border border-border/50 hover:-translate-y-1 flex flex-col justify-between"
+                  className="group bg-background rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-xl transition-all duration-300 border border-border/50 hover:-translate-y-1 flex flex-col justify-between"
                 >
                   <div>
                     <div className="w-full h-36 bg-white rounded-xl overflow-hidden mb-4 border border-border/40 flex items-center justify-center p-3">
