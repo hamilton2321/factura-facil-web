@@ -580,8 +580,8 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
         </div>
 
         {/* Right Column: Live Sticky Summary Card */}
-        <div className="lg:col-span-4 w-full max-w-full min-w-0">
-          <div id="resumen-cotizacion" className="lg:sticky lg:top-24 w-full max-w-full min-w-0 scroll-mt-24">
+        <div className="lg:col-span-4 w-full max-w-full min-w-0 self-start lg:sticky lg:top-24">
+          <div id="resumen-cotizacion" className="w-full max-w-full min-w-0 scroll-mt-24">
             <div className="bg-card rounded-2xl border-2 border-primary/20 shadow-xl p-5 sm:p-7 relative overflow-hidden w-full max-w-full">
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl pointer-events-none" />
 
@@ -838,51 +838,54 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
         </DialogContent>
       </Dialog>
 
-      {/* MOBILE STICKY PRICE BAR (Visible solo en celulares y tablets < lg) */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-card/95 backdrop-blur-md border-t border-border shadow-[0_-4px_25px_rgba(0,0,0,0.12)] p-2.5 sm:p-3 px-3 sm:px-4 flex items-center justify-between gap-2.5">
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-1.5 mb-0.5">
-            <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">
-              Total estimado:
-            </span>
-            <span className="text-[10px] bg-accent/20 text-accent-foreground font-bold px-1.5 py-0.2 rounded-full">
-              {cajasCount} {cajasCount === 1 ? "caja" : "cajas"}
-            </span>
-            {discountRate > 0 && (
-              <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-1 py-0.2 rounded">
-                10% OFF
+      {/* FLOATING STICKY PRICE BAR (Visible en móviles y computadores mientras se navega) */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-card/95 backdrop-blur-md border-t border-border shadow-[0_-4px_25px_rgba(0,0,0,0.12)] p-2.5 sm:p-3 px-3 sm:px-6">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 sm:gap-4">
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-1.5 sm:gap-2 mb-0.5">
+              <span className="text-[10px] sm:text-xs uppercase tracking-wider text-muted-foreground font-bold">
+                Total Inversión Estimada:
               </span>
-            )}
+              <span className="text-[10px] sm:text-xs bg-accent/20 text-accent-foreground font-bold px-1.5 sm:px-2 py-0.2 sm:py-0.5 rounded-full">
+                {cajasCount} {cajasCount === 1 ? "caja" : "cajas"}
+              </span>
+              {discountRate > 0 && (
+                <span className="text-[10px] sm:text-xs bg-emerald-100 text-emerald-800 font-bold px-1 sm:px-1.5 py-0.2 sm:py-0.5 rounded">
+                  10% OFF
+                </span>
+              )}
+            </div>
+            <div className="flex items-baseline gap-1 sm:gap-2">
+              <span className="font-display font-black text-lg sm:text-2xl text-primary leading-none">
+                {formatCOP(grandTotal)}
+              </span>
+              <span className="text-[10px] sm:text-xs font-bold text-muted-foreground">COP / Factura Lista</span>
+            </div>
           </div>
-          <div className="flex items-baseline gap-1">
-            <span className="font-display font-black text-lg sm:text-xl text-primary leading-none">
-              {formatCOP(grandTotal)}
-            </span>
-            <span className="text-[10px] font-bold text-muted-foreground">COP</span>
+
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            <Button
+              type="button"
+              onClick={scrollToSummary}
+              variant="outline"
+              size="sm"
+              className="h-9 sm:h-10 px-2.5 sm:px-4 text-xs sm:text-sm font-semibold border-primary/30 hover:border-primary flex items-center gap-1 sm:gap-1.5"
+            >
+              <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground" />
+              <span className="hidden sm:inline">Ver Resumen Completo</span>
+              <span className="sm:hidden">Detalle</span>
+            </Button>
+
+            <Button
+              type="button"
+              onClick={handleWhatsAppClick}
+              size="sm"
+              className="bg-[#25D366] hover:bg-[#20ba59] text-white font-display font-bold text-xs sm:text-sm h-9 sm:h-10 px-3 sm:px-5 shadow-md flex items-center gap-1.5 sm:gap-2"
+            >
+              <MessageCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <span>Enviar a WhatsApp</span>
+            </Button>
           </div>
-        </div>
-
-        <div className="flex items-center gap-2 shrink-0">
-          <Button
-            type="button"
-            onClick={scrollToSummary}
-            variant="outline"
-            size="sm"
-            className="h-9 px-2.5 sm:px-3 text-xs font-semibold border-primary/30 hover:border-primary flex items-center gap-1"
-          >
-            <Eye className="w-3.5 h-3.5 text-muted-foreground" />
-            <span>Detalle</span>
-          </Button>
-
-          <Button
-            type="button"
-            onClick={handleWhatsAppClick}
-            size="sm"
-            className="bg-[#25D366] hover:bg-[#20ba59] text-white font-display font-bold text-xs h-9 px-3 shadow-md flex items-center gap-1"
-          >
-            <MessageCircle className="w-3.5 h-3.5" />
-            <span>Cotizar</span>
-          </Button>
         </div>
       </div>
     </div>
