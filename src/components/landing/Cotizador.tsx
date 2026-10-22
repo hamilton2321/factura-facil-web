@@ -580,12 +580,12 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
         </div>
 
         {/* Right Column: Live Sticky Summary Card */}
-        <div className="lg:col-span-4 w-full max-w-full min-w-0 self-start lg:sticky lg:top-24">
+        <div className="lg:col-span-4 w-full max-w-full min-w-0 self-start lg:sticky lg:top-24 z-20">
           <div id="resumen-cotizacion" className="w-full max-w-full min-w-0 scroll-mt-24">
-            <div className="bg-card rounded-2xl border-2 border-primary/20 shadow-xl p-5 sm:p-7 relative overflow-hidden w-full max-w-full">
+            <div className="bg-card rounded-2xl border-2 border-primary/20 shadow-xl p-5 sm:p-6 relative overflow-hidden w-full max-w-full">
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl pointer-events-none" />
 
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-3.5">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
                   Presupuesto en Tiempo Real
@@ -600,7 +600,7 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
             </div>
 
             {/* Items Breakdown */}
-            <div className="space-y-3 pb-4 border-b border-border/80">
+            <div className="space-y-2.5 pb-3.5 border-b border-border/80">
               <div className="flex justify-between items-start text-sm">
                 <div className="min-w-0 pr-2">
                   <span className="font-medium text-foreground block truncate">
@@ -616,8 +616,8 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
               </div>
 
               {selectedAddons.length > 0 && (
-                <div className="space-y-1.5 pt-1">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                <div className="space-y-1 pt-0.5">
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                     Periféricos ({selectedAddons.length})
                   </span>
                   {selectedAddons.map((id) => {
@@ -637,7 +637,7 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
 
               {/* Free Bonuses & Software / DIAN Status */}
               <div className="pt-2 space-y-1.5 border-t border-border/50 text-[11px]">
-                <div className="flex items-center justify-between p-2.5 rounded-xl bg-emerald-50/90 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800">
+                <div className="flex items-center justify-between p-2 rounded-lg bg-emerald-50/90 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800">
                   <span className="flex items-center gap-1.5 font-bold text-xs text-emerald-950 dark:text-emerald-200">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" /> Software POS Licencia Vitalicia ($650k)
                   </span>
@@ -682,29 +682,29 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
             </div>
 
             {/* Total Calculation */}
-            <div className="py-4">
-              <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1 font-semibold">
+            <div className="py-3">
+              <div className="text-[11px] text-muted-foreground uppercase tracking-wider mb-0.5 font-semibold">
                 Total Inversión Estimada
               </div>
               <div className="flex items-baseline gap-2">
-                <span className="font-display font-extrabold text-3xl sm:text-4xl text-primary">
+                <span className="font-display font-extrabold text-2xl sm:text-3xl text-primary">
                   {formatCOP(grandTotal)}
                 </span>
-                <span className="text-xs font-bold text-muted-foreground">COP / Factura Lista</span>
+                <span className="text-[11px] font-bold text-muted-foreground">COP / Factura Lista</span>
               </div>
-              <p className="text-[11px] text-muted-foreground mt-2 leading-relaxed">
+              <p className="text-[10px] text-muted-foreground mt-1 leading-snug line-clamp-2">
                 {cotizadorData.disclaimer}
               </p>
             </div>
 
             {/* Included Benefits Badges */}
-            <div className="bg-muted/60 rounded-xl p-3 mb-5 space-y-1.5">
+            <div className="bg-muted/60 rounded-xl p-2.5 mb-3.5 space-y-1">
               <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
-                <ShieldCheck className="w-4 h-4 text-accent" />
+                <ShieldCheck className="w-3.5 h-3.5 text-accent" />
                 <span>Garantías de tu compra:</span>
               </div>
               {cotizadorData.includedBenefits.slice(0, 3).map((benefit, i) => (
-                <div key={i} className="text-[11px] text-muted-foreground flex items-center gap-1.5">
+                <div key={i} className="text-[10px] text-muted-foreground flex items-center gap-1.5">
                   <CheckCircle2 className="w-3 h-3 text-accent flex-shrink-0" />
                   <span className="truncate">{benefit}</span>
                 </div>
@@ -712,23 +712,23 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
             </div>
 
             {/* Action Buttons */}
-            <div className="space-y-3">
+            <div className="space-y-2">
               <Button
                 onClick={handleWhatsAppClick}
                 size="lg"
-                className="w-full bg-[#25D366] hover:bg-[#20ba59] text-white font-display font-bold text-sm sm:text-base h-12 shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                className="w-full bg-[#25D366] hover:bg-[#20ba59] text-white font-display font-bold text-xs sm:text-sm h-11 shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
               >
-                <MessageCircle className="w-5 h-5" />
+                <MessageCircle className="w-4 h-4" />
                 Enviar Cotización a WhatsApp
               </Button>
 
               <Button
                 onClick={() => setIsModalOpen(true)}
                 variant="outline"
-                size="lg"
-                className="w-full font-display font-semibold text-xs sm:text-sm h-11 border-2 border-primary/30 hover:border-primary hover:bg-primary/5 transition-all flex items-center justify-center gap-2"
+                size="sm"
+                className="w-full font-display font-semibold text-xs h-9 border-2 border-primary/30 hover:border-primary hover:bg-primary/5 transition-all flex items-center justify-center gap-2"
               >
-                <Send className="w-4 h-4 text-primary" />
+                <Send className="w-3.5 h-3.5 text-primary" />
                 Solicitar Asesoría por CRM / Correo
               </Button>
             </div>
@@ -838,54 +838,51 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
         </DialogContent>
       </Dialog>
 
-      {/* FLOATING STICKY PRICE BAR (Visible en móviles y computadores mientras se navega) */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-card/95 backdrop-blur-md border-t border-border shadow-[0_-4px_25px_rgba(0,0,0,0.12)] p-2.5 sm:p-3 px-3 sm:px-6">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 sm:gap-4">
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-1.5 sm:gap-2 mb-0.5">
-              <span className="text-[10px] sm:text-xs uppercase tracking-wider text-muted-foreground font-bold">
-                Total Inversión Estimada:
+      {/* MOBILE STICKY PRICE BAR (Visible solo en celulares y tablets < lg) */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-card/95 backdrop-blur-md border-t border-border shadow-[0_-4px_25px_rgba(0,0,0,0.12)] p-2.5 sm:p-3 px-3 sm:px-4 flex items-center justify-between gap-2.5">
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-1.5 mb-0.5">
+            <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">
+              Total estimado:
+            </span>
+            <span className="text-[10px] bg-accent/20 text-accent-foreground font-bold px-1.5 py-0.2 rounded-full">
+              {cajasCount} {cajasCount === 1 ? "caja" : "cajas"}
+            </span>
+            {discountRate > 0 && (
+              <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-1 py-0.2 rounded">
+                10% OFF
               </span>
-              <span className="text-[10px] sm:text-xs bg-accent/20 text-accent-foreground font-bold px-1.5 sm:px-2 py-0.2 sm:py-0.5 rounded-full">
-                {cajasCount} {cajasCount === 1 ? "caja" : "cajas"}
-              </span>
-              {discountRate > 0 && (
-                <span className="text-[10px] sm:text-xs bg-emerald-100 text-emerald-800 font-bold px-1 sm:px-1.5 py-0.2 sm:py-0.5 rounded">
-                  10% OFF
-                </span>
-              )}
-            </div>
-            <div className="flex items-baseline gap-1 sm:gap-2">
-              <span className="font-display font-black text-lg sm:text-2xl text-primary leading-none">
-                {formatCOP(grandTotal)}
-              </span>
-              <span className="text-[10px] sm:text-xs font-bold text-muted-foreground">COP / Factura Lista</span>
-            </div>
+            )}
           </div>
-
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-            <Button
-              type="button"
-              onClick={scrollToSummary}
-              variant="outline"
-              size="sm"
-              className="h-9 sm:h-10 px-2.5 sm:px-4 text-xs sm:text-sm font-semibold border-primary/30 hover:border-primary flex items-center gap-1 sm:gap-1.5"
-            >
-              <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground" />
-              <span className="hidden sm:inline">Ver Resumen Completo</span>
-              <span className="sm:hidden">Detalle</span>
-            </Button>
-
-            <Button
-              type="button"
-              onClick={handleWhatsAppClick}
-              size="sm"
-              className="bg-[#25D366] hover:bg-[#20ba59] text-white font-display font-bold text-xs sm:text-sm h-9 sm:h-10 px-3 sm:px-5 shadow-md flex items-center gap-1.5 sm:gap-2"
-            >
-              <MessageCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              <span>Enviar a WhatsApp</span>
-            </Button>
+          <div className="flex items-baseline gap-1">
+            <span className="font-display font-black text-lg sm:text-xl text-primary leading-none">
+              {formatCOP(grandTotal)}
+            </span>
+            <span className="text-[10px] font-bold text-muted-foreground">COP</span>
           </div>
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0">
+          <Button
+            type="button"
+            onClick={scrollToSummary}
+            variant="outline"
+            size="sm"
+            className="h-9 px-2.5 sm:px-3 text-xs font-semibold border-primary/30 hover:border-primary flex items-center gap-1"
+          >
+            <Eye className="w-3.5 h-3.5 text-muted-foreground" />
+            <span>Detalle</span>
+          </Button>
+
+          <Button
+            type="button"
+            onClick={handleWhatsAppClick}
+            size="sm"
+            className="bg-[#25D366] hover:bg-[#20ba59] text-white font-display font-bold text-xs h-9 px-3 shadow-md flex items-center gap-1"
+          >
+            <MessageCircle className="w-3.5 h-3.5" />
+            <span>Cotizar</span>
+          </Button>
         </div>
       </div>
     </div>
