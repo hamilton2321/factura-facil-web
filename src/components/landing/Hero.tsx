@@ -4,20 +4,27 @@ import {
   ShieldCheck,
   Headphones,
   Truck,
-  FileCheck2,
   Check,
   Package,
   Calculator,
   Zap,
+  Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { siteConfig } from "@/data/siteConfig";
 
 const Hero = () => {
+  const benefits = [
+    "Control de ventas, inventarios y caja en tiempo real",
+    "Software intuitivo con licencia vitalicia sin mensualidades",
+    "Capacitación inicial y soporte técnico permanente",
+  ];
+
   const trustBadges = [
     {
-      icon: FileCheck2,
-      title: "Homologado DIAN",
-      subtitle: "Certificado digital y emisión 100% legal",
+      icon: Sparkles,
+      title: "Licencia Vitalicia",
+      subtitle: "Software POS sin mensualidades ni contratos forzosos",
     },
     {
       icon: ShieldCheck,
@@ -27,7 +34,7 @@ const Hero = () => {
     {
       icon: Headphones,
       title: "Soporte Especializado",
-      subtitle: "Asesoría técnica y capacitación en Colombia",
+      subtitle: "Asesoría técnica y capacitación a tu equipo",
     },
     {
       icon: Truck,
@@ -45,31 +52,38 @@ const Hero = () => {
       <div className="section-container relative z-10 w-full max-w-full min-w-0">
         {/* Main Hero Grid: 12 Columns (7 left, 5 right) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center w-full max-w-full">
-          {/* Columna Izquierda: Mensaje Central & Propuesta de Valor (7 Cols) */}
+          {/* Columna Izquierda: Mensaje Central & Propuesta de Valor de Antes (7 Cols) */}
           <div className="lg:col-span-7 flex flex-col items-start space-y-4 sm:space-y-6 w-full min-w-0 animate-slide-up">
-            {/* Badge DIAN Oficial */}
-            <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-card border border-border shadow-xs max-w-full">
-              <span className="flex h-2.5 w-2.5 relative shrink-0">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-600" />
-              </span>
-              <span className="font-semibold text-xs sm:text-sm text-foreground tracking-tight truncate">
-                ✅ Homologado DIAN Colombia | Resolución 000042 y Anexo 1.9
+            {/* Badge de Antes (Sin Facturación Electrónica ni DIAN) */}
+            <div className="inline-flex items-center gap-2 bg-accent/10 text-accent-foreground px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full border border-accent/20 max-w-full">
+              <span className="w-2 h-2 bg-accent rounded-full animate-pulse shrink-0" />
+              <span className="text-xs sm:text-sm font-semibold tracking-tight truncate">
+                Sistema POS & Control Total de Ventas
               </span>
             </div>
 
-            {/* Titular Principal de Alto Impacto */}
+            {/* Titular Principal de Antes */}
             <h1 className="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl xl:text-6xl text-foreground tracking-tight leading-[1.15] break-words">
-              Moderniza tu Punto de Venta y Factura Electrónicamente{" "}
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-600 underline decoration-accent decoration-4 underline-offset-8">
-                sin Dolores de Cabeza
+              Transforma tu negocio con la eficiencia de{" "}
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-600">
+                {siteConfig.name}
               </span>
             </h1>
 
-            {/* Subtítulo Descriptivo */}
+            {/* Subtítulo Descriptivo de Antes */}
             <p className="text-sm sm:text-base lg:text-lg text-muted-foreground max-w-xl leading-relaxed">
-              Equipos POS todo-en-uno, software en la nube listo para vender y habilitación técnica ante la DIAN en menos de 24 horas. Evita sanciones y toma el control total de tu negocio desde hoy.
+              Gestiona ventas, inventarios y clientes de manera centralizada. Software intuitivo y hardware robusto listo para operar desde el primer día.
             </p>
+
+            {/* Lista de Beneficios Clave de Antes */}
+            <ul className="space-y-2.5 sm:space-y-3 w-full">
+              {benefits.map((benefit) => (
+                <li key={benefit} className="flex items-center gap-2.5 sm:gap-3 text-foreground text-xs sm:text-sm lg:text-base">
+                  <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-accent flex-shrink-0" />
+                  <span>{benefit}</span>
+                </li>
+              ))}
+            </ul>
 
             {/* Botones de Acción Inmediata (CTAs) */}
             <div className="w-full sm:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-1">
@@ -101,12 +115,12 @@ const Hero = () => {
             <div className="pt-2 sm:pt-3 flex flex-wrap items-center gap-4 sm:gap-6 text-muted-foreground border-t border-border/60 w-full">
               <div className="flex items-center gap-2">
                 <Zap className="w-4 h-4 text-accent" />
-                <span className="text-xs sm:text-sm font-medium text-foreground">Activación en &lt; 24h</span>
+                <span className="text-xs sm:text-sm font-medium text-foreground">Puesta en Marcha Rápida</span>
               </div>
               <div className="w-1.5 h-1.5 rounded-full bg-border hidden sm:block" />
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                <span className="text-xs sm:text-sm font-medium text-foreground">Firma Digital Incluida</span>
+                <span className="text-xs sm:text-sm font-medium text-foreground">Licencia Vitalicia</span>
               </div>
               <div className="w-1.5 h-1.5 rounded-full bg-border hidden sm:block" />
               <div className="flex items-center gap-2">
@@ -126,7 +140,7 @@ const Hero = () => {
                 <div className="relative w-full h-[250px] sm:h-[330px] rounded-xl overflow-hidden bg-primary">
                   <img
                     src="/images/hero-pos-stitch.jpg"
-                    alt="Terminal Táctil POS Factura Fácil Colombia"
+                    alt="Terminal Táctil POS Factura Fácil"
                     loading="eager"
                     fetchPriority="high"
                     width={600}
@@ -134,13 +148,13 @@ const Hero = () => {
                     className="w-full h-full object-cover opacity-90 hover:scale-105 transition-transform duration-700"
                   />
 
-                  {/* Gradient Overlay con información clave en la parte inferior de la pantalla */}
+                  {/* Gradient Overlay con información clave del equipo */}
                   <div className="absolute inset-0 bg-gradient-to-t from-primary/95 via-primary/30 to-transparent flex flex-col justify-end p-4 sm:p-5 text-white">
                     <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-accent font-display">
                       Terminal Táctil POS Pro
                     </span>
                     <p className="font-display font-bold text-sm sm:text-base leading-tight mt-0.5 text-white">
-                      Combo Impresora Térmica + Pantalla 15.6" + Lector
+                      Combo Pantalla Táctil + Impresora + Cajón + Lector
                     </p>
                     <div className="flex flex-wrap items-center gap-2 mt-2">
                       <span className="px-2 py-0.5 rounded bg-white/20 text-white font-semibold text-[10px] sm:text-[11px]">
@@ -158,11 +172,11 @@ const Hero = () => {
                   <div className="flex items-center gap-2 min-w-0">
                     <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
                     <span className="text-xs font-bold text-foreground truncate">
-                      POS Conectado a Servidores DIAN
+                      Sistema POS Configurado & Activo
                     </span>
                   </div>
                   <span className="font-display font-bold text-xs text-primary shrink-0">
-                    100% Online
+                    100% Operativo
                   </span>
                 </div>
               </div>
@@ -174,10 +188,10 @@ const Hero = () => {
                   <CheckCircle2 className="w-5 h-5 text-primary" />
                 </div>
                 <div className="flex flex-col pr-1 text-left">
-                  <span className="text-[11px] text-muted-foreground font-medium">Transmisión Inmediata</span>
-                  <span className="font-display font-bold text-xs text-foreground">Resolución DIAN Activa</span>
+                  <span className="text-[11px] text-muted-foreground font-medium">Ventas al Instante</span>
+                  <span className="font-display font-bold text-xs text-foreground">Punto de Venta Activo</span>
                   <span className="text-[11px] text-emerald-600 font-bold flex items-center gap-1">
-                    <Check className="w-3 h-3 text-emerald-600" /> Validación CUFE Previa
+                    <Check className="w-3 h-3 text-emerald-600" /> Tirillas & Recibos Rápidos
                   </span>
                 </div>
               </div>
@@ -198,13 +212,13 @@ const Hero = () => {
                     Listo para Vender
                   </span>
                   <span className="text-xs text-primary font-medium">
-                    Hardware + Software + Certificado
+                    Hardware + Software + Capacitación
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* VIÑETAS EN DISPOSITIVOS MÓVILES (< lg: Ajustadas sin salirse del margen derecho) */}
+            {/* VIÑETAS EN DISPOSITIVOS MÓVILES (< lg: Cuadrícula limpia sin corte en margen derecho) */}
             <div className="grid grid-cols-2 gap-2.5 w-full max-w-md mt-3 lg:hidden">
               <div className="bg-card p-2.5 rounded-xl shadow-sm border border-border flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">
@@ -212,10 +226,10 @@ const Hero = () => {
                 </div>
                 <div className="flex flex-col min-w-0">
                   <span className="font-display font-bold text-xs text-foreground truncate">
-                    Res. DIAN Activa
+                    Punto de Venta
                   </span>
                   <span className="text-[10px] text-emerald-600 font-bold truncate flex items-center gap-0.5">
-                    <Check className="w-3 h-3" /> CUFE Previa
+                    <Check className="w-3 h-3" /> Venta Rápida
                   </span>
                 </div>
               </div>
@@ -229,7 +243,7 @@ const Hero = () => {
                     Listo para Vender
                   </span>
                   <span className="text-[10px] text-primary font-medium truncate">
-                    Hard + Soft + DIAN
+                    Hardware + Software
                   </span>
                 </div>
               </div>
