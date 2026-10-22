@@ -233,7 +233,7 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
       )}
 
       {/* Main Grid: Steps (Left/Top) & Live Summary (Right/Bottom) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start w-full max-w-full min-w-0">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 w-full max-w-full min-w-0">
         {/* Steps Column */}
         <div className="lg:col-span-8 space-y-6 sm:space-y-8 w-full max-w-full min-w-0">
           {/* STEP 1: Tipo de Negocio */}
@@ -580,8 +580,9 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
         </div>
 
         {/* Right Column: Live Sticky Summary Card */}
-        <div id="resumen-cotizacion" className="lg:col-span-4 lg:sticky lg:top-24 w-full max-w-full min-w-0 scroll-mt-24 self-start">
-          <div className="bg-card rounded-2xl border-2 border-primary/20 shadow-xl p-5 sm:p-7 relative overflow-hidden w-full max-w-full">
+        <div className="lg:col-span-4 w-full max-w-full min-w-0">
+          <div id="resumen-cotizacion" className="lg:sticky lg:top-24 w-full max-w-full min-w-0 scroll-mt-24">
+            <div className="bg-card rounded-2xl border-2 border-primary/20 shadow-xl p-5 sm:p-7 relative overflow-hidden w-full max-w-full">
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl pointer-events-none" />
 
             <div className="flex items-center justify-between mb-4">
@@ -636,11 +637,13 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
 
               {/* Free Bonuses & Software / DIAN Status */}
               <div className="pt-2 space-y-1.5 border-t border-border/50 text-[11px]">
-                <div className="flex items-center justify-between text-secondary font-medium">
-                  <span className="flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-accent shrink-0" /> Software POS Licencia Vitalicia ($650k)
+                <div className="flex items-center justify-between p-2.5 rounded-xl bg-emerald-50/90 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800">
+                  <span className="flex items-center gap-1.5 font-bold text-xs text-emerald-950 dark:text-emerald-200">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" /> Software POS Licencia Vitalicia ($650k)
                   </span>
-                  <span className="font-bold text-secondary">INCLUIDO ($0)</span>
+                  <span className="font-black text-[11px] text-emerald-800 dark:text-emerald-100 bg-emerald-100/90 dark:bg-emerald-900/60 px-2 py-0.5 rounded border border-emerald-300 dark:border-emerald-700 shrink-0">
+                    INCLUIDO ($0)
+                  </span>
                 </div>
 
                 {includeDian ? (
@@ -732,6 +735,7 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
           </div>
         </div>
       </div>
+    </div>
 
       {/* CRM Lead Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
@@ -889,7 +893,7 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
   }
 
   return (
-    <section id="cotizador" className="py-16 sm:py-20 bg-muted/40 relative overflow-hidden w-full max-w-full">
+    <section id="cotizador" className="py-16 sm:py-20 bg-muted/40 relative w-full max-w-full">
       <div className="absolute top-0 right-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl pointer-events-none" />
       {content}
