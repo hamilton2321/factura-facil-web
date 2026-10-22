@@ -16,6 +16,7 @@ import {
   MapPin,
   ShieldCheck,
   Eye,
+  Tag,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -45,8 +46,8 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
   const { toast } = useToast();
 
   // State
-  const [selectedBusinessType, setSelectedBusinessType] = useState<string>("restaurante");
-  const [selectedBaseId, setSelectedBaseId] = useState<string>("touch");
+  const [selectedBusinessType, setSelectedBusinessType] = useState<string>("supermercados");
+  const [selectedBaseId, setSelectedBaseId] = useState<string>("allinone");
   const [selectedAddons, setSelectedAddons] = useState<string[]>([
     "impresora-58",
     "cajon",
@@ -75,7 +76,7 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
     [selectedBaseId]
   );
 
-  // Calculations
+  // Calculations with 10% Multicaja discount (from Stitch specs)
   const addonsTotal = useMemo(() => {
     return selectedAddons.reduce((sum, addonId) => {
       const item = cotizadorData.addons.find((a) => a.id === addonId);
@@ -83,9 +84,14 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
     }, 0);
   }, [selectedAddons]);
 
-  const basePricePerCaja = currentBase.price;
-  const unitTotal = basePricePerCaja + addonsTotal;
-  const grandTotal = unitTotal * cajasCount;
+  const unitBasePrice = currentBase.price;
+  const unitTotal = unitBasePrice + addonsTotal;
+  const subtotalAll = unitTotal * cajasCount;
+  
+  // 10% discount starting at 2 cash registers
+  const discountRate = cajasCount >= 2 ? 0.10 : 0.0;
+  const discountAmount = Math.round(subtotalAll * discountRate);
+  const grandTotal = subtotalAll - discountAmount;
 
   // Handlers
   const handleSelectBusiness = (businessId: string) => {
@@ -114,13 +120,18 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
           .join("\n")
       : "  • Ninguno adicional";
 
+    const discountText = discountRate > 0
+      ? `\n🎉 Descuento Multicaja (10%): -${formatCOP(discountAmount)} COP`
+      : "";
+
     const text =
-      `¡Hola ${siteConfig.name}! 🚀 Acabo de armar mi cotización en la página web:\n\n` +
+      `¡Hola ${siteConfig.name}! 🚀 Acabo de armar mi cotización oficial en la página web:\n\n` +
       `🏢 Tipo de negocio: ${currentBusiness.name}\n` +
       `💻 Equipo base: ${currentBase.name} (${formatCOP(currentBase.price)})\n` +
       `🖨️ Periféricos seleccionados:\n${addonsListText}\n` +
       `📦 Puntos de venta (cajas): ${cajasCount} ${cajasCount === 1 ? "caja" : "cajas"}\n` +
-      `💰 Total estimado de referencia: ${formatCOP(grandTotal)} COP\n\n` +
+      `🎁 Incluye: Software POS Licencia Vitalicia ($0) + Certificado DIAN ($0)${discountText}\n` +
+      `💰 Total inversión estimada: ${formatCOP(grandTotal)} COP\n\n` +
       `¿Me podrían confirmar disponibilidad, medios de pago y tiempos de entrega? Gracias.`;
 
     return encodeURIComponent(text);
@@ -147,12 +158,13 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
     setIsSubmitting(true);
 
     const quotationSummary =
-      `Cotización Web:\n` +
+      `Cotización Oficial Web:\n` +
       `- Negocio: ${currentBusiness.name}\n` +
       `- Base: ${currentBase.name} (${formatCOP(currentBase.price)})\n` +
       `- Periféricos: ${selectedAddons.join(", ")}\n` +
       `- Cajas: ${cajasCount}\n` +
-      `- Total Estimado: ${formatCOP(grandTotal)} COP\n` +
+      `- Descuento Multicaja: ${discountRate > 0 ? `-${formatCOP(discountAmount)} COP (10%)` : "No aplica"}\n` +
+      `- Total Final: ${formatCOP(grandTotal)} COP\n` +
       `- Ciudad: ${leadForm.city || "No especificada"}`;
 
     try {
@@ -201,7 +213,7 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
         <div className="text-center max-w-3xl mx-auto mb-10 animate-fade-in px-2">
           <Badge className="mb-4 bg-accent/15 text-accent-foreground border-accent/20 px-3 py-1 text-sm font-semibold inline-flex items-center gap-1.5">
             <Calculator className="w-4 h-4 text-accent" />
-            Configurador a la Medida
+            Configurador Oficial a la Medida
           </Badge>
           <h2 className="font-display font-bold text-2xl sm:text-4xl lg:text-5xl text-foreground mb-4">
             {cotizadorData.title}
@@ -218,18 +230,23 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
         <div className="lg:col-span-8 space-y-6 sm:space-y-8 w-full max-w-full min-w-0">
           {/* STEP 1: Tipo de Negocio */}
           <div className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-7 border border-border shadow-sm w-full max-w-full min-w-0">
-            <div className="flex items-center gap-3 mb-5">
-              <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-full gradient-primary text-primary-foreground font-bold flex items-center justify-center text-xs sm:text-sm shrink-0">
-                1
-              </span>
-              <div className="min-w-0">
-                <h3 className="font-display font-semibold text-lg sm:text-xl text-foreground truncate">
-                  ¿Cuál es el tipo de tu negocio?
-                </h3>
-                <p className="text-xs sm:text-sm text-muted-foreground truncate">
-                  Selecciona tu sector para adaptar el sistema a tus necesidades
-                </p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-5">
+              <div className="flex items-center gap-3">
+                <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-full gradient-primary text-primary-foreground font-bold flex items-center justify-center text-xs sm:text-sm shrink-0">
+                  1
+                </span>
+                <div className="min-w-0">
+                  <h3 className="font-display font-semibold text-lg sm:text-xl text-foreground truncate">
+                    ¿Cuál es tu tipo de negocio?
+                  </h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground truncate">
+                    Auto-configuramos el hardware y módulos DIAN recomendados
+                  </p>
+                </div>
               </div>
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-primary/10 text-primary font-semibold text-[11px] self-start sm:self-auto">
+                <Sparkles className="w-3 h-3 text-accent" /> Preconfiguración Activa
+              </span>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-4 w-full min-w-0">
@@ -256,12 +273,12 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
                       <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
                     </div>
                     <div className="min-w-0 w-full">
-                      <div className="font-semibold text-xs sm:text-base text-foreground leading-snug line-clamp-2">
+                      <div className="font-semibold text-xs sm:text-sm text-foreground leading-snug line-clamp-2">
                         {biz.name}
                       </div>
-                      <p className="text-[11px] sm:text-xs text-muted-foreground mt-1 line-clamp-2 hidden sm:block">
-                        {biz.description}
-                      </p>
+                      <span className="inline-block mt-1 text-[10px] font-bold text-accent bg-accent/10 px-1.5 py-0.2 rounded">
+                        {biz.tag}
+                      </span>
                     </div>
                   </button>
                 );
@@ -277,10 +294,10 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
               </span>
               <div className="min-w-0">
                 <h3 className="font-display font-semibold text-lg sm:text-xl text-foreground truncate">
-                  Elige tu solución base (Equipo + Software)
+                  Selecciona tu Equipo Base
                 </h3>
                 <p className="text-xs sm:text-sm text-muted-foreground truncate">
-                  Todos incluyen Facturación Electrónica DIAN y capacitación inicial
+                  Arquitectura industrial diseñada para operación comercial ininterrumpida
                 </p>
               </div>
             </div>
@@ -301,7 +318,7 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
                   >
                     {base.popular && (
                       <Badge className="absolute -top-2.5 right-3 bg-accent text-accent-foreground font-semibold text-[10px] sm:text-xs border-0 shadow">
-                        Más Elegido
+                        Más Vendido
                       </Badge>
                     )}
 
@@ -336,7 +353,7 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
                     </div>
 
                     <div className="pt-2 border-t border-border/50 flex items-center justify-between">
-                      <span className="text-[11px] text-muted-foreground">
+                      <span className="text-[11px] text-muted-foreground font-medium">
                         {isSelected ? "Seleccionado" : "Toca para elegir"}
                       </span>
                       <div
@@ -363,10 +380,10 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
               </span>
               <div className="min-w-0">
                 <h3 className="font-display font-semibold text-lg sm:text-xl text-foreground truncate">
-                  Periféricos y accesorios complementarios
+                  Añade Periféricos Modulares
                 </h3>
                 <p className="text-xs sm:text-sm text-muted-foreground truncate">
-                  Toca para activar o desactivar cada equipo de tu punto de venta
+                  Componentes certificados que operan en sincronía nativa con Factura Fácil DIAN
                 </p>
               </div>
             </div>
@@ -423,10 +440,10 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
                 </span>
                 <div className="min-w-0">
                   <h3 className="font-display font-semibold text-lg sm:text-xl text-foreground">
-                    ¿Cuántos puntos de venta (cajas) necesitas?
+                    Número de Puntos de Venta / Cajas
                   </h3>
                   <p className="text-xs sm:text-sm text-muted-foreground">
-                    Multiplica esta configuración por cada caja de tu local
+                    <span className="text-accent font-bold">¡Descuento del 10%!</span> aplicado automáticamente a partir de 2 cajas.
                   </p>
                 </div>
               </div>
@@ -466,11 +483,16 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl pointer-events-none" />
 
             <div className="flex items-center justify-between mb-4">
-              <Badge className="bg-primary/10 text-primary border-primary/20 font-semibold text-xs">
-                Resumen de tu Cotización
-              </Badge>
-              <span className="text-xs text-muted-foreground font-medium">
-                {cajasCount} {cajasCount === 1 ? "punto de venta" : "puntos de venta"}
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
+                  Presupuesto en Tiempo Real
+                </span>
+                <Badge className="bg-primary/10 text-primary border-primary/20 font-bold text-xs mt-0.5">
+                  Resumen de tu Cotización
+                </Badge>
+              </div>
+              <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[11px] flex items-center gap-1 border border-emerald-200">
+                <Check className="w-3 h-3 text-emerald-600" /> DIAN OK
               </span>
             </div>
 
@@ -479,14 +501,14 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
               <div className="flex justify-between items-start text-sm">
                 <div className="min-w-0 pr-2">
                   <span className="font-medium text-foreground block truncate">
-                    {currentBase.name}
+                    {cajasCount}x {currentBase.name}
                   </span>
                   <span className="text-xs text-muted-foreground">
                     Para: {currentBusiness.name}
                   </span>
                 </div>
                 <span className="font-semibold text-foreground shrink-0">
-                  {formatCOP(currentBase.price)}
+                  {formatCOP(currentBase.price * cajasCount)}
                 </span>
               </div>
 
@@ -500,9 +522,9 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
                     if (!item) return null;
                     return (
                       <div key={id} className="flex justify-between text-xs text-muted-foreground">
-                        <span className="truncate pr-2">• {item.name}</span>
+                        <span className="truncate pr-2">• {cajasCount}x {item.name}</span>
                         <span className="flex-shrink-0 text-foreground/80 font-medium">
-                          {formatCOP(item.price)}
+                          {formatCOP(item.price * cajasCount)}
                         </span>
                       </div>
                     );
@@ -510,24 +532,43 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
                 </div>
               )}
 
-              {cajasCount > 1 && (
-                <div className="pt-2 flex justify-between text-xs text-accent font-semibold">
-                  <span>Multiplicador por {cajasCount} cajas</span>
-                  <span>x{cajasCount}</span>
+              {/* Free Bonuses Included (from Stitch design) */}
+              <div className="pt-2 space-y-1 border-t border-border/50 text-[11px]">
+                <div className="flex items-center justify-between text-secondary font-medium">
+                  <span className="flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-accent shrink-0" /> Software POS Licencia Vitalicia
+                  </span>
+                  <span className="font-bold text-secondary">INCLUIDO ($0)</span>
+                </div>
+                <div className="flex items-center justify-between text-secondary font-medium">
+                  <span className="flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-accent shrink-0" /> Certificado & Homologación DIAN
+                  </span>
+                  <span className="font-bold text-secondary">INCLUIDO ($0)</span>
+                </div>
+              </div>
+
+              {/* Multicaja Discount Row */}
+              {discountRate > 0 && (
+                <div className="pt-2 flex items-center justify-between text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30 p-2 rounded-lg border border-emerald-200">
+                  <span className="flex items-center gap-1">
+                    <Tag className="w-3.5 h-3.5" /> Descuento Multicaja (10%):
+                  </span>
+                  <span>-{formatCOP(discountAmount)} COP</span>
                 </div>
               )}
             </div>
 
             {/* Total Calculation */}
             <div className="py-4">
-              <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
-                Inversión estimada de referencia
+              <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1 font-semibold">
+                Total Inversión Estimada
               </div>
               <div className="flex items-baseline gap-2">
                 <span className="font-display font-extrabold text-3xl sm:text-4xl text-primary">
                   {formatCOP(grandTotal)}
                 </span>
-                <span className="text-xs font-bold text-muted-foreground">COP</span>
+                <span className="text-xs font-bold text-muted-foreground">COP / Factura Lista</span>
               </div>
               <p className="text-[11px] text-muted-foreground mt-2 leading-relaxed">
                 {cotizadorData.disclaimer}
@@ -538,7 +579,7 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
             <div className="bg-muted/60 rounded-xl p-3 mb-5 space-y-1.5">
               <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
                 <ShieldCheck className="w-4 h-4 text-accent" />
-                <span>Incluido con tu solución:</span>
+                <span>Garantías de tu compra:</span>
               </div>
               {cotizadorData.includedBenefits.slice(0, 3).map((benefit, i) => (
                 <div key={i} className="text-[11px] text-muted-foreground flex items-center gap-1.5">
@@ -556,7 +597,7 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
                 className="w-full bg-[#25D366] hover:bg-[#20ba59] text-white font-display font-bold text-sm sm:text-base h-12 shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
               >
                 <MessageCircle className="w-5 h-5" />
-                Pedir Cotización por WhatsApp
+                Enviar Cotización a WhatsApp
               </Button>
 
               <Button
@@ -566,7 +607,7 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
                 className="w-full font-display font-semibold text-xs sm:text-sm h-11 border-2 border-primary/30 hover:border-primary hover:bg-primary/5 transition-all flex items-center justify-center gap-2"
               >
                 <Send className="w-4 h-4 text-primary" />
-                Enviar a un Asesor Especializado
+                Solicitar Asesoría por CRM / Correo
               </Button>
             </div>
           </div>
@@ -581,20 +622,20 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
               Enviar Cotización a un Asesor
             </DialogTitle>
             <DialogDescription className="text-sm text-muted-foreground">
-              Ingresa tus datos de contacto para que nuestro equipo te envíe la propuesta formal con ficha técnica y descuentos aplicables.
+              Ingresa tus datos de contacto para que nuestro equipo prepare tu propuesta formal DIAN en PDF con ficha técnica y descuentos.
             </DialogDescription>
           </DialogHeader>
 
           <form onSubmit={handleSubmitLead} className="space-y-4 mt-2">
             <div>
               <Label htmlFor="cot-name" className="text-xs font-medium">
-                Nombre Completo *
+                Nombre Completo o Razón Social *
               </Label>
               <div className="relative mt-1">
                 <User className="w-4 h-4 text-muted-foreground absolute left-3 top-3" />
                 <Input
                   id="cot-name"
-                  placeholder="Ej: Carlos Gómez"
+                  placeholder="Ej: Carlos Gómez / Inversiones SAS"
                   className="pl-9"
                   required
                   value={leadForm.name}
@@ -657,10 +698,10 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
             {/* Quick summary preview in modal */}
             <div className="bg-muted p-3 rounded-lg text-xs space-y-1 text-muted-foreground">
               <div className="flex justify-between font-medium text-foreground">
-                <span>{currentBase.name} ({currentBusiness.name})</span>
+                <span>{cajasCount}x {currentBase.name}</span>
                 <span className="font-bold text-primary">{formatCOP(grandTotal)}</span>
               </div>
-              <p>Periféricos: {selectedAddons.length} seleccionados • {cajasCount} {cajasCount === 1 ? "caja" : "cajas"}</p>
+              <p>Periféricos: {selectedAddons.length} seleccionados • {cajasCount} {cajasCount === 1 ? "caja" : "cajas"}{discountRate > 0 ? " • 10% OFF incluido" : ""}</p>
             </div>
 
             <Button
@@ -684,6 +725,11 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
             <span className="text-[10px] bg-accent/20 text-accent-foreground font-bold px-1.5 py-0.2 rounded-full">
               {cajasCount} {cajasCount === 1 ? "caja" : "cajas"}
             </span>
+            {discountRate > 0 && (
+              <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-1 py-0.2 rounded">
+                10% OFF
+              </span>
+            )}
           </div>
           <div className="flex items-baseline gap-1">
             <span className="font-display font-black text-lg sm:text-xl text-primary leading-none">

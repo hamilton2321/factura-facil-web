@@ -1,10 +1,11 @@
 import {
   Printer,
-  Calculator,
-  ScanBarcode,
   Scale,
   Monitor,
   Laptop,
+  Smartphone,
+  Barcode,
+  Layers,
   type LucideIcon,
 } from "lucide-react";
 
@@ -13,68 +14,95 @@ export interface HardwareItem {
   title: string;
   description: string;
   price: string;
+  rawPrice: number;
   image: string;
+  tag: string;
 }
 
 /**
- * Catálogo de Hardware y Periféricos Comerciales.
- * Puedes modificar nombres, descripciones, precios o fotos aquí.
+ * Catálogo Oficial de Hardware y Periféricos Individuales Factura Fácil Colombia.
+ * Sincronizado con los precios unitarios reales de Stitch.
  */
 export const hardwareData: HardwareItem[] = [
   {
-    icon: Monitor,
-    title: "Computador de Escritorio",
-    description: "Equipo de torre con potencia y fácil conexión de periféricos.",
-    price: "Consultar",
-    image: "/images/combo-desktop.webp",
+    icon: Scale,
+    title: "Balanza Comercial HY918",
+    description: "Balanza digital homologada con conexión serial directa al POS para venta por peso sin digitar.",
+    price: "$649.000 COP",
+    rawPrice: 649000,
+    image: "/images/scale.webp",
+    tag: "Fruvers & Carnicerías",
+  },
+  {
+    icon: Smartphone,
+    title: "Computador Touch Nuevo",
+    description: "Terminal táctil capacitiva grado industrial para trabajo continuo en caja y comandas.",
+    price: "$2.299.000 COP",
+    rawPrice: 2299000,
+    image: "/images/combo-touch.webp",
+    tag: "Restaurantes & Bares",
   },
   {
     icon: Laptop,
-    title: "Computador All In One",
-    description: "Equipo integrado de diseño elegante y ahorro de espacio.",
-    price: "Consultar",
+    title: "Computador All in One Usado",
+    description: "Equipo todo en uno corporativo remanufacturado clase A. Estética limpia sin cables.",
+    price: "$979.000 COP",
+    rawPrice: 979000,
     image: "/images/combo-allinone.webp",
+    tag: "Ropa & Droguerías",
   },
   {
-    icon: Printer,
-    title: "Impresora Térmica 58mm",
-    description: "Imprime en papel térmico de 58mm e incluye un rollo de papel de obsequio.",
-    price: "Desde $150.000",
-    image: "/images/printer.webp",
+    icon: Monitor,
+    title: "Computador Escritorio Usado",
+    description: "Torre corporativa remanufacturada clase A con monitor LED, teclado y mouse.",
+    price: "$689.000 COP",
+    rawPrice: 689000,
+    image: "/images/combo-desktop.webp",
+    tag: "Comercio General",
   },
   {
     icon: Printer,
     title: "Impresora Térmica 80mm",
-    description: "Conexión USB/LAN, ideal para comandas en red y cuenta con corte automático de recibos.",
-    price: "Desde $250.000",
+    description: "Conexión USB y Red LAN con corte automático de tirilla. Ideal para comandas de cocina y alto flujo.",
+    price: "$389.000 COP",
+    rawPrice: 389000,
     image: "/images/printer.webp",
+    tag: "Auto-corte / Comandas",
+  },
+  {
+    icon: Printer,
+    title: "Impresora Térmica 58mm",
+    description: "Impresora térmica compacta y económica para recibos de venta rápida. Incluye rollo de obsequio.",
+    price: "$179.000 COP",
+    rawPrice: 179000,
+    image: "/images/printer.webp",
+    tag: "Económica",
   },
   {
     icon: Printer,
     title: "Impresora Térmica Portátil",
-    description: "Especializada en la impresión de etiquetas adhesivas de 58mm; incluye cargador USB.",
-    price: "Desde $180.000",
+    description: "Impresora inalámbrica Bluetooth para cobro móvil, preventistas y repartos.",
+    price: "$249.000 COP",
+    rawPrice: 249000,
     image: "/images/printer.webp",
+    tag: "Inalámbrica Bluetooth",
   },
   {
-    icon: Calculator,
-    title: "Cajón Monedero",
-    description: "Estructura metálica con 4 puestos, llave de seguridad y testeado para más de 2 millones de aperturas.",
-    price: "Desde $180.000",
+    icon: Layers,
+    title: "Cajón Monedero Metálico",
+    description: "Cajón de trabajo pesado con apertura automática por impresora RJ11 y llave de 3 posiciones.",
+    price: "$239.000 COP",
+    rawPrice: 239000,
     image: "/images/drawer.webp",
+    tag: "Estructura Acero",
   },
   {
-    icon: ScanBarcode,
-    title: "Lector de Barras",
-    description: "Escáner láser con base ajustable y vida útil de hasta 10 millones de escaneos.",
-    price: "Desde $120.000",
+    icon: Barcode,
+    title: "Lector Código de Barras",
+    description: "Lector láser rápido con base manos libres automática para lectura de códigos 1D y productos.",
+    price: "$199.000 COP",
+    rawPrice: 199000,
     image: "/images/scanner.webp",
-  },
-  {
-    icon: Scale,
-    title: "Balanza HY918",
-    description: "Conexión RS-232/USB con capacidad máxima de 30kg.",
-    price: "Desde $450.000",
-    image: "/images/scale.webp",
+    tag: "Con Base Manos Libres",
   },
 ];
