@@ -10,9 +10,9 @@ import WhatsAppButton from "@/components/landing/WhatsAppButton";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background w-full max-w-full overflow-x-hidden">
+    <div className="min-h-screen bg-background w-full max-w-full">
       <Header />
-      <main className="w-full max-w-full overflow-x-hidden">
+      <main className="w-full max-w-full">
         {/* 1. Hero con propuesta de valor + Barra de Confianza DIAN */}
         <Hero />
 

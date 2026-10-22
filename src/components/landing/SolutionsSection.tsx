@@ -37,7 +37,7 @@ export default function SolutionsSection() {
   };
 
   return (
-    <section id="soluciones" className="py-16 sm:py-20 lg:py-24 bg-muted/30 overflow-hidden w-full max-w-full relative">
+    <section id="soluciones" className="py-16 sm:py-20 lg:py-24 bg-muted/30 w-full max-w-full relative">
       <div className="section-container relative z-10 w-full max-w-full min-w-0">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-10 px-2">
