@@ -459,7 +459,7 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
                 >
                   <Minus className="w-4 h-4" />
                 </Button>
-                <span className="font-display font-bold text-base sm:text-lg min-w-14 text-center text-foreground">
+                <span className="font-display font-bold text-base sm:text-lg min-w-[3.5rem] text-center text-foreground">
                   {cajasCount} {cajasCount === 1 ? "caja" : "cajas"}
                 </span>
                 <Button
