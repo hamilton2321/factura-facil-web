@@ -580,8 +580,8 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
         </div>
 
         {/* Right Column: Live Sticky Summary Card */}
-        <div className="lg:col-span-4 w-full max-w-full min-w-0 self-start lg:sticky lg:top-24 z-20">
-          <div id="resumen-cotizacion" className="w-full max-w-full min-w-0 scroll-mt-24">
+        <div className="lg:col-span-4 w-full max-w-full min-w-0 h-full">
+          <div id="resumen-cotizacion" className="lg:sticky lg:top-24 w-full max-w-full min-w-0 scroll-mt-24 z-20">
             <div className="bg-card rounded-2xl border-2 border-primary/20 shadow-xl p-5 sm:p-6 relative overflow-hidden w-full max-w-full">
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl pointer-events-none" />
 
