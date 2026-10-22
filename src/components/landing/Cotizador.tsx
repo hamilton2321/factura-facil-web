@@ -32,7 +32,7 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { siteConfig } from "@/data/siteConfig";
-import { cotizadorData, dianPromotion } from "@/data/cotizador";
+import { cotizadorData, dianPromotion, SOFTWARE_POS_PRICE } from "@/data/cotizador";
 import { syncLeadToTwenty } from "@/services/crm";
 
 const formatCOP = (amount: number) => {
@@ -49,12 +49,13 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
   // State
   const [selectedBusinessType, setSelectedBusinessType] = useState<string>("supermercados");
   const [selectedBaseId, setSelectedBaseId] = useState<string>("allinone");
+  const [includeSoftware, setIncludeSoftware] = useState<boolean>(true);
   const [includeDian, setIncludeDian] = useState<boolean>(false);
-  const [selectedAddons, setSelectedAddons] = useState<string[]>([
-    "impresora-58",
-    "cajon",
-    "lector",
-  ]);
+  const [addonQuantities, setAddonQuantities] = useState<Record<string, number>>({
+    "impresora-58": 1,
+    "cajon": 1,
+    "lector": 1,
+  });
   const [cajasCount, setCajasCount] = useState<number>(1);
 
   // Modal State for CRM lead submission
@@ -78,21 +79,41 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
     [selectedBaseId]
   );
 
-  // Calculations with Optional DIAN promo and 10% Multicaja discount
-  const addonsTotal = useMemo(() => {
-    return selectedAddons.reduce((sum, addonId) => {
-      const item = cotizadorData.addons.find((a) => a.id === addonId);
-      return sum + (item ? item.price : 0);
-    }, 0);
-  }, [selectedAddons]);
-
+  // Calculations
+  const softwarePricePerUnit = includeSoftware ? SOFTWARE_POS_PRICE : 0;
   const dianPricePerUnit = includeDian ? dianPromotion.firstTimePromoPrice : 0;
   const unitBasePrice = currentBase.price;
-  const unitTotal = unitBasePrice + addonsTotal + dianPricePerUnit;
-  const subtotalAll = unitTotal * cajasCount;
-  
+
+  // Total from addons (each addon's price * its quantity)
+  const addonsTotal = useMemo(() => {
+    return cotizadorData.addons.reduce((sum, addon) => {
+      const qty = addonQuantities[addon.id] || 0;
+      return sum + addon.price * qty;
+    }, 0);
+  }, [addonQuantities]);
+
+  const activeAddonsList = useMemo(() => {
+    return cotizadorData.addons
+      .map((addon) => ({
+        item: addon,
+        qty: addonQuantities[addon.id] || 0,
+      }))
+      .filter((x) => x.qty > 0);
+  }, [addonQuantities]);
+
+  const totalAddonsCount = useMemo(() => {
+    return activeAddonsList.reduce((sum, x) => sum + x.qty, 0);
+  }, [activeAddonsList]);
+
+  // Subtotal (Hardware base + Software + DIAN) * cajasCount + Periféricos
+  const subtotalAll =
+    unitBasePrice * cajasCount +
+    softwarePricePerUnit * cajasCount +
+    dianPricePerUnit * cajasCount +
+    addonsTotal;
+
   // 10% discount starting at 2 cash registers
-  const discountRate = cajasCount >= 2 ? 0.10 : 0.0;
+  const discountRate = cajasCount >= 2 ? 0.1 : 0.0;
   const discountAmount = Math.round(subtotalAll * discountRate);
   const grandTotal = subtotalAll - discountAmount;
 
@@ -105,40 +126,56 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
     }
   };
 
+  const getAddonQty = (addonId: string) => addonQuantities[addonId] || 0;
+
+  const handleSetAddonQty = (addonId: string, qty: number) => {
+    const safeQty = Math.max(0, Math.min(10, qty));
+    setAddonQuantities((prev) => ({
+      ...prev,
+      [addonId]: safeQty,
+    }));
+  };
+
   const handleToggleAddon = (addonId: string) => {
-    setSelectedAddons((prev) =>
-      prev.includes(addonId) ? prev.filter((id) => id !== addonId) : [...prev, addonId]
-    );
+    setAddonQuantities((prev) => {
+      const current = prev[addonId] || 0;
+      return {
+        ...prev,
+        [addonId]: current > 0 ? 0 : 1,
+      };
+    });
   };
 
   // WhatsApp Message Generator
   const generateWhatsAppMessage = () => {
-    const addonsListText = selectedAddons.length > 0
-      ? selectedAddons
-          .map((id) => {
-            const item = cotizadorData.addons.find((a) => a.id === id);
-            return item ? `  • ${item.name} (${formatCOP(item.price)})` : "";
-          })
-          .filter(Boolean)
-          .join("\n")
-      : "  • Ninguno adicional";
+    const addonsListText =
+      activeAddonsList.length > 0
+        ? activeAddonsList
+            .map(({ item, qty }) => `  • ${qty}x ${item.name} (${formatCOP(item.price * qty)})`)
+            .join("\n")
+        : "  • Ninguno adicional";
 
-    const discountText = discountRate > 0
-      ? `\n🎉 Descuento Multicaja (10%): -${formatCOP(discountAmount)} COP`
-      : "";
+    const discountText =
+      discountRate > 0
+        ? `\n🎉 Descuento Multicaja (10%): -${formatCOP(discountAmount)} COP`
+        : "";
+
+    const softwareText = includeSoftware
+      ? `  • Licencia Software POS Vitalicia: INCLUIDA (${formatCOP(SOFTWARE_POS_PRICE * cajasCount)})`
+      : `  • Licencia Software POS: No requerida ($0)`;
 
     const dianStatusText = includeDian
-      ? `  • Facturación Electrónica DIAN: ACTIVADA (+ ${formatCOP(dianPromotion.firstTimePromoPrice)} promo 1er año)`
+      ? `  • Facturación Electrónica DIAN: ACTIVADA (+ ${formatCOP(dianPromotion.firstTimePromoPrice * cajasCount)} promo 1er año)`
       : `  • Facturación Electrónica: No requerida (Solo POS Tradicional)`;
 
     const text =
       `¡Hola ${siteConfig.name}! 🚀 Acabo de armar mi cotización oficial en la página web:\n\n` +
       `🏢 Tipo de negocio: ${currentBusiness.name}\n` +
-      `💻 Equipo base: ${currentBase.name} (${formatCOP(currentBase.price)})\n` +
-      `⚡ Modalidad de Facturación:\n${dianStatusText}\n` +
+      `💻 Computador / Equipo base: ${currentBase.name} (${formatCOP(currentBase.price * cajasCount)})\n` +
+      `📦 Software POS:\n${softwareText}\n` +
+      `⚡ Modalidad DIAN:\n${dianStatusText}\n` +
       `🖨️ Periféricos seleccionados:\n${addonsListText}\n` +
-      `📦 Puntos de venta (cajas): ${cajasCount} ${cajasCount === 1 ? "caja" : "cajas"}\n` +
-      `🎁 Incluye: Software POS Licencia Vitalicia ($650k valor incluido) + Soporte${discountText}\n` +
+      `📦 Puntos de venta (cajas): ${cajasCount} ${cajasCount === 1 ? "caja" : "cajas"}${discountText}\n` +
       `💰 Total inversión estimada: ${formatCOP(grandTotal)} COP\n\n` +
       `¿Me podrían confirmar disponibilidad, medios de pago y tiempos de entrega? Gracias.`;
 
@@ -165,11 +202,17 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
 
     setIsSubmitting(true);
 
+    const activeAddonsText = activeAddonsList
+      .map(({ item, qty }) => `${qty}x ${item.name}`)
+      .join(", ");
+
     const quotationSummary =
       `Cotización Oficial Web:\n` +
       `- Negocio: ${currentBusiness.name}\n` +
-      `- Base: ${currentBase.name} (${formatCOP(currentBase.price)})\n` +
-      `- Periféricos: ${selectedAddons.join(", ")}\n` +
+      `- Base PC: ${currentBase.name} (${formatCOP(currentBase.price * cajasCount)})\n` +
+      `- Software POS: ${includeSoftware ? `Sí (${formatCOP(SOFTWARE_POS_PRICE * cajasCount)})` : "No requerido"}\n` +
+      `- DIAN: ${includeDian ? `Activada (${formatCOP(dianPromotion.firstTimePromoPrice * cajasCount)})` : "Solo POS"}\n` +
+      `- Periféricos: ${activeAddonsText || "Ninguno"}\n` +
       `- Cajas: ${cajasCount}\n` +
       `- Descuento Multicaja: ${discountRate > 0 ? `-${formatCOP(discountAmount)} COP (10%)` : "No aplica"}\n` +
       `- Total Final: ${formatCOP(grandTotal)} COP\n` +
@@ -294,7 +337,7 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
             </div>
           </div>
 
-          {/* STEP 2: Equipo Base & Software */}
+          {/* STEP 2: Computador / Equipo Base */}
           <div className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-7 border border-border shadow-sm w-full max-w-full min-w-0">
             <div className="flex items-center gap-3 mb-5">
               <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-full gradient-primary text-primary-foreground font-bold flex items-center justify-center text-xs sm:text-sm shrink-0">
@@ -302,10 +345,10 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
               </span>
               <div className="min-w-0">
                 <h3 className="font-display font-semibold text-lg sm:text-xl text-foreground truncate">
-                  Selecciona tu Equipo Base
+                  Selecciona tu Computador / Equipo Base
                 </h3>
                 <p className="text-xs sm:text-sm text-muted-foreground truncate">
-                  Arquitectura industrial diseñada para operación comercial ininterrumpida
+                  Elige el equipo para tu punto de venta o utiliza tu propio PC actual
                 </p>
               </div>
             </div>
@@ -336,7 +379,7 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
                           <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
                         </div>
                         <span className="font-display font-bold text-base sm:text-lg text-primary shrink-0">
-                          {formatCOP(base.price)}
+                          {base.price === 0 ? "Ya tengo PC ($0)" : formatCOP(base.price)}
                         </span>
                       </div>
 
@@ -380,6 +423,93 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
             </div>
           </div>
 
+          {/* MÓDULO: Software POS Licencia Vitalicia */}
+          <div className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-7 border border-border shadow-sm w-full max-w-full min-w-0">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                  <Sparkles className="w-4 h-4 text-primary" />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="font-display font-semibold text-base sm:text-lg text-foreground truncate">
+                    Licencia Software POS Factura Fácil (Vitalicia)
+                  </h3>
+                  <p className="text-xs text-muted-foreground truncate">
+                    Pago único de por vida. Sin mensualidades ni cobros por factura para control de caja e inventarios.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full min-w-0">
+              {/* Opción 1: Con Licencia Vitalicia ($650.000) */}
+              <div
+                onClick={() => setIncludeSoftware(true)}
+                className={`cursor-pointer p-3.5 sm:p-4 rounded-xl border transition-all flex items-start gap-3 select-none ${
+                  includeSoftware
+                    ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-xs"
+                    : "border-border/80 hover:border-primary/40 bg-background"
+                }`}
+              >
+                <div
+                  className={`w-4 h-4 sm:w-5 sm:h-5 mt-0.5 rounded-full flex items-center justify-center border shrink-0 transition-colors ${
+                    includeSoftware
+                      ? "bg-primary border-primary text-primary-foreground"
+                      : "border-muted-foreground/40"
+                  }`}
+                >
+                  {includeSoftware && <Check className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5" />}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-1 mb-0.5">
+                    <span className="font-bold text-xs sm:text-sm text-foreground">
+                      Incluir Software POS Vitalicio
+                    </span>
+                    <span className="text-xs font-black text-primary">
+                      +{formatCOP(SOFTWARE_POS_PRICE)}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground leading-snug">
+                    Instalación remota, capacitación y soporte de por vida sin mensualidades obligatorias.
+                  </p>
+                </div>
+              </div>
+
+              {/* Opción 2: Solo Hardware (Sin Licencia) */}
+              <div
+                onClick={() => setIncludeSoftware(false)}
+                className={`cursor-pointer p-3.5 sm:p-4 rounded-xl border transition-all flex items-start gap-3 select-none ${
+                  !includeSoftware
+                    ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-xs"
+                    : "border-border/80 hover:border-primary/40 bg-background"
+                }`}
+              >
+                <div
+                  className={`w-4 h-4 sm:w-5 sm:h-5 mt-0.5 rounded-full flex items-center justify-center border shrink-0 transition-colors ${
+                    !includeSoftware
+                      ? "bg-primary border-primary text-primary-foreground"
+                      : "border-muted-foreground/40"
+                  }`}
+                >
+                  {!includeSoftware && <Check className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5" />}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-1 mb-0.5">
+                    <span className="font-bold text-xs sm:text-sm text-foreground">
+                      Solo Hardware (Sin Licencia)
+                    </span>
+                    <span className="text-[10px] font-bold text-muted-foreground bg-muted px-2 py-0.5 rounded">
+                      $0 COP
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground leading-snug">
+                    Para clientes existentes que ya tienen licencia o solo desean adquirir periféricos/computador.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* MÓDULO OPCIONAL: Facturación Electrónica DIAN */}
           <div className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-7 border border-border shadow-sm w-full max-w-full min-w-0">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
@@ -392,7 +522,7 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
                     ¿Deseas activar Facturación Electrónica DIAN?
                   </h3>
                   <p className="text-xs text-muted-foreground truncate">
-                    Por defecto tu sistema incluye Software POS Vitalicio. Añade DIAN a precio especial por compra de equipo.
+                    Habilitación oficial DIAN con tarifa promocional de 1er año por compra de equipo o software.
                   </p>
                 </div>
               </div>
@@ -423,11 +553,11 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
                       Solo POS Tradicional
                     </span>
                     <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                      INCLUIDO ($0)
+                      $0 COP
                     </span>
                   </div>
                   <p className="text-[11px] text-muted-foreground leading-snug">
-                    Licencia Software POS Vitalicia sin mensualidades. Para control de inventarios, caja y ventas en tirilla.
+                    Ventas en tirilla y control de caja local. No emite facturas electrónicas a la DIAN.
                   </p>
                 </div>
               </div>
@@ -485,7 +615,7 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
                   Añade Periféricos Modulares
                 </h3>
                 <p className="text-xs sm:text-sm text-muted-foreground truncate">
-                  Componentes certificados que operan en sincronía nativa con Factura Fácil
+                  Selecciona la cantidad exacta de periféricos que necesitas para tu operación
                 </p>
               </div>
             </div>
@@ -493,39 +623,84 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 w-full min-w-0">
               {cotizadorData.addons.map((addon) => {
                 const Icon = addon.icon;
-                const isChecked = selectedAddons.includes(addon.id);
+                const qty = getAddonQty(addon.id);
+                const isSelected = qty > 0;
+
                 return (
                   <div
                     key={addon.id}
-                    onClick={() => handleToggleAddon(addon.id)}
-                    className={`cursor-pointer p-3 sm:p-4 rounded-xl border transition-all flex items-start gap-2.5 sm:gap-3 select-none min-w-0 ${
-                      isChecked
+                    className={`p-3 sm:p-4 rounded-xl border transition-all flex flex-col justify-between select-none min-w-0 ${
+                      isSelected
                         ? "border-primary/80 bg-primary/5 ring-1 ring-primary/20 shadow-xs"
                         : "border-border/80 hover:border-primary/40 bg-background"
                     }`}
                   >
-                    <div
-                      className={`w-4 h-4 sm:w-5 sm:h-5 mt-0.5 rounded flex items-center justify-center border flex-shrink-0 transition-colors ${
-                        isChecked
-                          ? "bg-primary border-primary text-primary-foreground"
-                          : "border-muted-foreground/40 bg-background"
-                      }`}
-                    >
-                      {isChecked && <Check className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5" />}
+                    <div className="flex items-start gap-2.5 sm:gap-3">
+                      <div
+                        onClick={() => handleToggleAddon(addon.id)}
+                        className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center shrink-0 cursor-pointer transition-colors ${
+                          isSelected
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-primary/10 text-primary"
+                        }`}
+                      >
+                        <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
+                      </div>
+
+                      <div className="flex-1 min-w-0 cursor-pointer" onClick={() => handleToggleAddon(addon.id)}>
+                        <div className="flex items-start justify-between gap-1.5">
+                          <span className="font-semibold text-xs sm:text-sm text-foreground leading-snug">
+                            {addon.name}
+                          </span>
+                        </div>
+                        <p className="text-[11px] sm:text-xs text-muted-foreground mt-0.5 line-clamp-2">
+                          {addon.description}
+                        </p>
+                      </div>
                     </div>
 
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-1.5">
-                        <span className="font-semibold text-xs sm:text-sm text-foreground leading-snug">
-                          {addon.name}
+                    <div className="mt-3 pt-2.5 border-t border-border/50 flex items-center justify-between gap-2">
+                      <div>
+                        <span className="text-xs font-bold text-primary block">
+                          {formatCOP(addon.price)} <span className="text-[10px] font-normal text-muted-foreground">c/u</span>
                         </span>
-                        <span className="font-bold text-xs text-primary flex-shrink-0 whitespace-nowrap ml-1">
-                          +{formatCOP(addon.price)}
-                        </span>
+                        {qty > 1 && (
+                          <span className="text-[10px] text-muted-foreground font-medium block">
+                            Subtotal: {formatCOP(addon.price * qty)}
+                          </span>
+                        )}
                       </div>
-                      <p className="text-[11px] sm:text-xs text-muted-foreground mt-0.5 line-clamp-2">
-                        {addon.description}
-                      </p>
+
+                      {/* Stepper Controls */}
+                      <div className="flex items-center gap-1.5 bg-background border border-border rounded-lg p-1 shrink-0">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="h-6 w-6 rounded-md hover:bg-muted"
+                          onClick={() => handleSetAddonQty(addon.id, qty - 1)}
+                          disabled={qty === 0}
+                          aria-label={`Reducir ${addon.name}`}
+                        >
+                          <Minus className="w-3 h-3" />
+                        </Button>
+                        <span className={`font-display font-bold text-xs min-w-[1.5rem] text-center ${
+                          qty > 0 ? "text-primary font-black" : "text-muted-foreground"
+                        }`}>
+                          {qty}
+                        </span>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="h-6 w-6 rounded-md hover:bg-muted"
+                          onClick={() => handleSetAddonQty(addon.id, qty + 1)}
+                          disabled={qty >= 10}
+                          aria-label={`Añadir ${addon.name}`}
+                        >
+                          <Plus className="w-3 h-3" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 );
@@ -615,71 +790,84 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
                 </span>
               </div>
 
-              {selectedAddons.length > 0 && (
-                <div className="space-y-1 pt-0.5">
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    Periféricos ({selectedAddons.length})
-                  </span>
-                  {selectedAddons.map((id) => {
-                    const item = cotizadorData.addons.find((a) => a.id === id);
-                    if (!item) return null;
-                    return (
-                      <div key={id} className="flex justify-between text-xs text-muted-foreground">
-                        <span className="truncate pr-2">• {cajasCount}x {item.name}</span>
-                        <span className="flex-shrink-0 text-foreground/80 font-medium">
-                          {formatCOP(item.price * cajasCount)}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-
-              {/* Free Bonuses & Software / DIAN Status */}
-              <div className="pt-2 space-y-1.5 border-t border-border/50 text-[11px]">
-                <div className="flex items-center justify-between p-2 rounded-lg bg-emerald-50/90 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800">
-                  <span className="flex items-center gap-1.5 font-bold text-xs text-emerald-950 dark:text-emerald-200">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" /> Software POS Licencia Vitalicia ($650k)
-                  </span>
-                  <span className="font-black text-[11px] text-emerald-800 dark:text-emerald-100 bg-emerald-100/90 dark:bg-emerald-900/60 px-2 py-0.5 rounded border border-emerald-300 dark:border-emerald-700 shrink-0">
-                    INCLUIDO ($0)
-                  </span>
-                </div>
-
-                {includeDian ? (
-                  <div className="flex items-center justify-between text-foreground font-semibold bg-primary/5 p-2 rounded-lg border border-primary/20">
+                {/* Software POS Row */}
+                {includeSoftware ? (
+                  <div className="flex items-center justify-between text-xs p-2 rounded-lg bg-primary/5 border border-primary/20">
                     <div className="min-w-0 pr-1">
-                      <span className="flex items-center gap-1 text-primary">
-                        <Sparkles className="w-3.5 h-3.5 text-accent shrink-0" /> Facturación Electrónica DIAN
+                      <span className="flex items-center gap-1.5 font-bold text-foreground">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-primary shrink-0" /> {cajasCount}x Licencia Software POS
                       </span>
                       <span className="text-[10px] text-muted-foreground block">
-                        Promo 1er año ({cajasCount} {cajasCount === 1 ? "equipo" : "equipos"})
+                        Pago único vitalicio sin mensualidades
                       </span>
                     </div>
                     <span className="font-bold text-primary shrink-0">
-                      +{formatCOP(dianPromotion.firstTimePromoPrice * cajasCount)}
+                      {formatCOP(SOFTWARE_POS_PRICE * cajasCount)}
                     </span>
                   </div>
                 ) : (
-                  <div className="flex items-center justify-between text-muted-foreground">
+                  <div className="flex items-center justify-between text-xs text-muted-foreground px-2 py-0.5">
                     <span className="flex items-center gap-1">
-                      <Check className="w-3.5 h-3.5 text-muted-foreground/60 shrink-0" /> Facturación Electrónica DIAN
+                      <Check className="w-3.5 h-3.5 text-muted-foreground/60 shrink-0" /> Software POS
                     </span>
-                    <span className="text-[10px] bg-muted px-1.5 py-0.2 rounded font-medium">No requerida ($0)</span>
+                    <span className="text-[10px] bg-muted px-1.5 py-0.5 rounded font-medium">No requerido ($0)</span>
+                  </div>
+                )}
+
+                {/* Peripherals Breakdown */}
+                {activeAddonsList.length > 0 && (
+                  <div className="space-y-1 pt-1 border-t border-border/40">
+                    <div className="flex justify-between items-center text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                      <span>Periféricos ({totalAddonsCount} unid.)</span>
+                      <span>{formatCOP(addonsTotal)}</span>
+                    </div>
+                    {activeAddonsList.map(({ item, qty }) => (
+                      <div key={item.id} className="flex justify-between text-xs text-muted-foreground">
+                        <span className="truncate pr-2">• {qty}x {item.name}</span>
+                        <span className="flex-shrink-0 text-foreground/80 font-medium">
+                          {formatCOP(item.price * qty)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* DIAN Status */}
+                <div className="pt-1.5 border-t border-border/40 text-[11px]">
+                  {includeDian ? (
+                    <div className="flex items-center justify-between text-foreground font-semibold bg-accent/10 p-2 rounded-lg border border-accent/30">
+                      <div className="min-w-0 pr-1">
+                        <span className="flex items-center gap-1 text-accent-foreground font-bold">
+                          <Sparkles className="w-3.5 h-3.5 text-accent shrink-0" /> Facturación Electrónica DIAN
+                        </span>
+                        <span className="text-[10px] text-muted-foreground block">
+                          Promo 1er año ({cajasCount} {cajasCount === 1 ? "licencia" : "licencias"})
+                        </span>
+                      </div>
+                      <span className="font-bold text-primary shrink-0">
+                        +{formatCOP(dianPromotion.firstTimePromoPrice * cajasCount)}
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-between text-muted-foreground px-2 py-0.5">
+                      <span className="flex items-center gap-1">
+                        <Check className="w-3.5 h-3.5 text-muted-foreground/60 shrink-0" /> Facturación Electrónica DIAN
+                      </span>
+                      <span className="text-[10px] bg-muted px-1.5 py-0.2 rounded font-medium">Solo POS ($0)</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Multicaja Discount Row */}
+                {discountRate > 0 && (
+                  <div className="pt-2 flex items-center justify-between text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30 p-2 rounded-lg border border-emerald-200">
+                    <span className="flex items-center gap-1">
+                      <Tag className="w-3.5 h-3.5" /> Descuento Multicaja (10%):
+                    </span>
+                    <span>-{formatCOP(discountAmount)} COP</span>
                   </div>
                 )}
               </div>
-
-              {/* Multicaja Discount Row */}
-              {discountRate > 0 && (
-                <div className="pt-2 flex items-center justify-between text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30 p-2 rounded-lg border border-emerald-200">
-                  <span className="flex items-center gap-1">
-                    <Tag className="w-3.5 h-3.5" /> Descuento Multicaja (10%):
-                  </span>
-                  <span>-{formatCOP(discountAmount)} COP</span>
-                </div>
-              )}
-            </div>
 
             {/* Total Calculation */}
             <div className="py-3">
@@ -824,7 +1012,7 @@ export default function Cotizador({ isEmbedded = false }: CotizadorProps) {
                 <span>{cajasCount}x {currentBase.name}</span>
                 <span className="font-bold text-primary">{formatCOP(grandTotal)}</span>
               </div>
-              <p>Periféricos: {selectedAddons.length} seleccionados • {cajasCount} {cajasCount === 1 ? "caja" : "cajas"}{discountRate > 0 ? " • 10% OFF incluido" : ""}</p>
+              <p>Periféricos: {totalAddonsCount} unid. • {includeSoftware ? "Software POS incluido" : "Sin software"} • {cajasCount} {cajasCount === 1 ? "caja" : "cajas"}{discountRate > 0 ? " • 10% OFF" : ""}</p>
             </div>
 
             <Button

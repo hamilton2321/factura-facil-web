@@ -52,6 +52,8 @@ export const dianPromotion = {
   savings: 650000,             // Ahorro de $650.000
 };
 
+export const SOFTWARE_POS_PRICE = 650000; // Licencia Software POS Vitalicia permanente sin mensualidades
+
 export const cotizadorData = {
   title: "Cotizador Interactivo de Sistemas POS",
   subtitle: "Personaliza tu solución a la medida en tiempo real con precios oficiales de Factura Fácil Colombia.",
@@ -110,17 +112,17 @@ export const cotizadorData = {
 
   baseOptions: [
     {
-      id: "solo-software",
-      name: "Software POS Licencia Vitalicia",
-      tagline: "Para usar en tu propio computador",
-      description: "Licencia de Software POS Factura Fácil de por vida sin mensualidades ni pagos obligatorios por factura.",
-      price: 650000,
+      id: "propio",
+      name: "Ya tengo computador propio",
+      tagline: "Instalamos en tu PC o portátil actual",
+      description: "No gastes en equipo de cómputo si ya tienes un PC o portátil con Windows 10/11 en tu negocio.",
+      price: 0,
       icon: Sparkles,
       includes: [
-        "Software POS Licencia Vitalicia ($650.000)",
-        "Control de ventas, caja e inventarios",
         "Instalación y configuración remota",
-        "Capacitación inicial para cajeros",
+        "Aprovecha tu propio PC o portátil",
+        "Configuración de periféricos existentes",
+        "$0 COP en hardware de cómputo",
       ],
     },
     {
@@ -133,8 +135,8 @@ export const cotizadorData = {
       includes: [
         "PC Torre Corporativo Remanufacturado",
         "Monitor LED + Teclado y Mouse",
-        "Software POS Licencia Vitalicia ($650k)",
         "1 año de garantía en hardware",
+        "Puesto a punto y listo para operar",
       ],
     },
     {
@@ -147,21 +149,21 @@ export const cotizadorData = {
       icon: Laptop,
       includes: [
         "PC All In One Corporativo Integrado",
-        "Software POS Licencia Vitalicia ($650k)",
+        "Pantalla HD + Teclado y Mouse",
         "1 año de garantía en hardware",
-        "Capacitación y soporte incluido",
+        "Ahorro de espacio en tu mostrador",
       ],
     },
     {
       id: "touch",
-      name: "Computador Touch Nuevo",
+      name: "Computador Touch Industrial Nuevo",
       tagline: "Velocidad total para restaurantes y bares",
       description: "Terminal punto de venta con pantalla táctil capacitiva grado industrial, totalmente nueva.",
       price: 2299000,
       icon: Smartphone,
       includes: [
         "Pantalla Táctil Touch POS 100% Nueva",
-        "Software POS Licencia Vitalicia ($650k)",
+        "Chasis industrial resistente a salpicaduras",
         "1 año de garantía en hardware",
         "Soporte técnico prioritario",
       ],
